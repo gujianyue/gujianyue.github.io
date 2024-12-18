@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>在浏览器输入域名并回车会发生哪些事情 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="从TCP&amp;#x2F;IP网络模型角度理解当你在浏览器中输入域名并按下回车键时，会触发一系列的网络活动，涉及到多个TCP&amp;#x2F;IP网络模型中的协议和组件。以下是从浏览器输入域名到访问网页的大致流程，以及涉及的主要网络协议：
+
+DNS解析（域名系统协议 - DNS）：•  当你在浏览器中输入一个域">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="在浏览器输入域名并回车会发生哪些事情"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>在浏览器输入域名并回车会发生哪些事情</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/11/29/在浏览器输入域名并回车会发生哪些事情/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-11-29T13:42:55.000Z">
+          2024-11-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="从TCP-x2F-IP网络模型角度理解"><a href="#从TCP-x2F-IP网络模型角度理解" class="headerlink" title="从TCP&#x2F;IP网络模型角度理解"></a>从TCP&#x2F;IP网络模型角度理解</h2><p>当你在浏览器中输入域名并按下回车键时，会触发一系列的网络活动，涉及到多个TCP&#x2F;IP网络模型中的协议和组件。以下是从浏览器输入域名到访问网页的大致流程，以及涉及的主要网络协议：</p>
+<ol>
+<li>DNS解析（域名系统协议 - DNS）：<br>•  当你在浏览器中输入一个域名时，首先需要将域名解析为IP地址。这通常通过DNS查询完成。<br>•  浏览器会检查本地的DNS缓存，如果没有找到对应的IP地址，它会向配置的DNS服务器发送查询请求。<br>•  DNS服务器会递归查询，直到找到对应的IP地址，并将结果返回给浏览器。</li>
+<li>ARP协议（地址解析协议 - ARP）：<br>•  如果目标服务器与本地设备在同一局域网内，浏览器可能会使用ARP来将目标IP地址解析为MAC地址。</li>
+<li>IP协议（网际协议 - IP）：<br>•  IP协议负责将数据封装成IP数据包，并在网络中传输。它会处理数据包从源到目的地的传输。</li>
+<li>ICMP协议（互联网控制消息协议 - ICMP）：<br>•  如果在传输过程中遇到问题，如目的地不可达，ICMP协议可以用来发送错误消息。</li>
+<li>TCP协议（传输控制协议 - TCP）：<br>•  一旦DNS解析出IP地址，浏览器会使用TCP协议建立到目标服务器的连接。这涉及到三次握手过程：<br>•  客户端发送SYN（同步序列编号）包到服务器。<br>•  服务器响应SYN-ACK（同步和确认）包。<br>•  客户端发送ACK（确认）包，完成握手。</li>
+<li>HTTP&#x2F;HTTPS协议（超文本传输协议&#x2F;安全超文本传输协议）：<br>•  TCP连接建立后，浏览器会发送HTTP（或HTTPS，如果是加密连接）请求到服务器，请求获取网页内容。<br>•  如果是HTTPS连接，还会涉及到SSL&#x2F;TLS协议来建立安全连接，包括证书验证和加密通信。</li>
+<li>FTP&#x2F;SFTP协议（文件传输协议&#x2F;安全文件传输协议）：<br>•  如果请求涉及下载文件，可能会使用FTP或SFTP协议。</li>
+<li>SMTP&#x2F;POP3&#x2F;IMAP协议（简单邮件传输协议&#x2F;邮局协议&#x2F;互联网消息访问协议）：<br>•  如果请求涉及发送或接收电子邮件，可能会使用SMTP、POP3或IMAP协议。</li>
+<li>TCP&#x2F;IP数据传输：<br>•  一旦HTTP请求被发送，服务器会处理请求并返回相应的HTML页面、图片、CSS文件、JavaScript文件等。<br>•  这些响应通过TCP连接传输回浏览器。</li>
+<li>浏览器渲染：<br>•  浏览器接收到数据后，会解析HTML、CSS和JavaScript，并将网页渲染显示给用户。</li>
+</ol>
+<p>TCP&#x2F;IP网络模型通常被分为四层：应用层、传输层、网络层和数据链路层。以下是你提到的协议分别属于网络模型的哪一层：</p>
+<ol>
+<li>应用层：<br>•  DNS（域名系统协议）：负责将域名转换为IP地址。<br>•  HTTP&#x2F;HTTPS（超文本传输协议&#x2F;安全超文本传输协议）：用于客户端和服务器之间的请求和响应消息传输。<br>•  FTP&#x2F;SFTP（文件传输协议&#x2F;安全文件传输协议）：用于文件的传输。<br>•  SMTP&#x2F;POP3&#x2F;IMAP（简单邮件传输协议&#x2F;邮局协议&#x2F;互联网消息访问协议）：用于电子邮件的发送和接收。</li>
+<li>传输层：<br>•  TCP（传输控制协议）：提供可靠的、面向连接的数据传输服务。<br>•  UDP（用户数据报协议）：提供不可靠的、无连接的数据传输服务（虽然UDP没有被提及，但它也是传输层的一个重要协议）。</li>
+<li>网络层：<br>•  IP（网际协议）：负责数据包的寻址和路由。<br>•  ICMP（互联网控制消息协议）：用于发送错误消息和网络查询。</li>
+<li>数据链路层：<br>•  ARP（地址解析协议）：将IP地址解析为MAC地址，用于同一局域网内的设备通信。<br>数据链路层还涉及到其他一些协议和机制，如以太网（Ethernet）用于局域网通信，以及各种网络接口卡（NIC）驱动程序等。</li>
+</ol>
+<h2 id="从云服务分布式部署架构理解"><a href="#从云服务分布式部署架构理解" class="headerlink" title="从云服务分布式部署架构理解"></a>从云服务分布式部署架构理解</h2><p>从浏览器输入域名并回车后的过程会涉及到多个网络协议和组件，具体如下：</p>
+<ol>
+<li>DNS解析：<br>•  首先，浏览器会进行DNS解析，将域名转换为IP地址。如果域名对应的服务是分布式部署的，DNS解析可能返回一个负载均衡器的IP地址，或者根据地理位置或其他策略返回不同区域服务器的IP地址。</li>
+<li>负载均衡：<br>•  四层负载均衡：在IP+端口层面进行请求分发，根据IP地址和端口号将流量导向后端的具体服务器。<br>•  七层负载均衡：在应用层进行请求分发，可以根据URL、主机名等应用层信息将请求路由到不同的处理服务器。<br>•  负载均衡器可以根据不同的策略来分配请求，如轮询、最少连接、源IP散列或加权负载均衡。</li>
+<li>网络协议：<br>•  HTTP&#x2F;HTTPS：用于浏览器与服务器之间的请求和响应消息传输。<br>•  TCP&#x2F;IP：负责数据包的寻址和路由。<br>•  UDP：在需要低延迟或高吞吐量的场景中使用，如实时应用、视频流或DNS查询。</li>
+<li>服务发现与注册：<br>•  在分布式系统中，服务实例需要在服务注册中心注册自己，以便负载均衡器或其他服务能够发现并调用它们。常见的服务注册中心包括ETCD、Consul或Zookeeper。</li>
+<li>服务网关：<br>•  服务网关负责路由、过滤和负载均衡，提供统一的服务入口。例如，Spring Cloud Gateway可以作为服务网关。</li>
+<li>熔断器：<br>•  熔断器如Hystrix或Resilience4j，提供故障时的自动切断机制和降级服务，防止系统雪崩。</li>
+<li>配置管理：<br>•  分布式配置中心如Spring Cloud Config或Apollo，用于统一管理配置信息，支持动态更新配置。</li>
+<li>消息队列：<br>•  消息队列如RabbitMQ、Kafka等，用于异步通信和消息传递。</li>
+<li>缓存和数据库：<br>•  分布式缓存如Redis、Memcached，以及分布式数据库如MySQL集群、Cassandra、HBase等，用于存储和查询数据。<br>通过这些组件和协议的协同工作，分布式系统能够处理大量的并发请求，提供高可用性和可扩展性。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/计算机基础/">计算机基础</a>
+    </span>
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
