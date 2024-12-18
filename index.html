@@ -49,6 +49,10 @@
       
         <li><a href="/archives">归档</a></li>
       
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
         <li><a href="/about">关于</a></li>
       
     </ul>
@@ -57,6 +61,590 @@
 
     <main class="site-main posts-loop">
     
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2024/12/18/限流的实现方式/"><span>限流的实现方式</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/18/限流的实现方式/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-18T00:53:49.000Z">
+          2024-12-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="令牌桶"><a href="#令牌桶" class="headerlink" title="令牌桶"></a>令牌桶</h2><p><img src="/../assets/tokenBucket.jpg" alt="令牌桶"></p>
+<h2 id="漏桶"><a href="#漏桶" class="headerlink" title="漏桶"></a>漏桶</h2><p><img src="/../assets/leakyBucket.jpg" alt="漏桶"></p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><h2 id="具体实现方式"><a href="#具体实现方式" class="headerlink" title="具体实现方式"></a>具体实现方式</h2><h2 id="令牌桶能定义QPS吗"><a href="#令牌桶能定义QPS吗" class="headerlink" title="令牌桶能定义QPS吗"></a>令牌桶能定义QPS吗</h2>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/分布式/">分布式</a><a href="/tags/网络/">网络</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2024/11/29/在浏览器输入域名并回车会发生哪些事情/"><span>在浏览器输入域名并回车会发生哪些事情</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/11/29/在浏览器输入域名并回车会发生哪些事情/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-11-29T13:42:55.000Z">
+          2024-11-29
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="从TCP-x2F-IP网络模型角度理解"><a href="#从TCP-x2F-IP网络模型角度理解" class="headerlink" title="从TCP&#x2F;IP网络模型角度理解"></a>从TCP&#x2F;IP网络模型角度理解</h2><p>当你在浏览器中输入域名并按下回车键时，会触发一系列的网络活动，涉及到多个TCP&#x2F;IP网络模型中的协议和组件。以下是从浏览器输入域名到访问网页的大致流程，以及涉及的主要网络协议：</p>
+<ol>
+<li>DNS解析（域名系统协议 - DNS）：<br>•  当你在浏览器中输入一个域名时，首先需要将域名解析为IP地址。这通常通过DNS查询完成。<br>•  浏览器会检查本地的DNS缓存，如果没有找到对应的IP地址，它会向配置的DNS服务器发送查询请求。<br>•  DNS服务器会递归查询，直到找到对应的IP地址，并将结果返回给浏览器。</li>
+<li>ARP协议（地址解析协议 - ARP）：<br>•  如果目标服务器与本地设备在同一局域网内，浏览器可能会使用ARP来将目标IP地址解析为MAC地址。</li>
+<li>IP协议（网际协议 - IP）：<br>•  IP协议负责将数据封装成IP数据包，并在网络中传输。它会处理数据包从源到目的地的传输。</li>
+<li>ICMP协议（互联网控制消息协议 - ICMP）：<br>•  如果在传输过程中遇到问题，如目的地不可达，ICMP协议可以用来发送错误消息。</li>
+<li>TCP协议（传输控制协议 - TCP）：<br>•  一旦DNS解析出IP地址，浏览器会使用TCP协议建立到目标服务器的连接。这涉及到三次握手过程：<br>•  客户端发送SYN（同步序列编号）包到服务器。<br>•  服务器响应SYN-ACK（同步和确认）包。<br>•  客户端发送ACK（确认）包，完成握手。</li>
+<li>HTTP&#x2F;HTTPS协议（超文本传输协议&#x2F;安全超文本传输协议）：<br>•  TCP连接建立后，浏览器会发送HTTP（或HTTPS，如果是加密连接）请求到服务器，请求获取网页内容。<br>•  如果是HTTPS连接，还会涉及到SSL&#x2F;TLS协议来建立安全连接，包括证书验证和加密通信。</li>
+<li>FTP&#x2F;SFTP协议（文件传输协议&#x2F;安全文件传输协议）：<br>•  如果请求涉及下载文件，可能会使用FTP或SFTP协议。</li>
+<li>SMTP&#x2F;POP3&#x2F;IMAP协议（简单邮件传输协议&#x2F;邮局协议&#x2F;互联网消息访问协议）：<br>•  如果请求涉及发送或接收电子邮件，可能会使用SMTP、POP3或IMAP协议。</li>
+<li>TCP&#x2F;IP数据传输：<br>•  一旦HTTP请求被发送，服务器会处理请求并返回相应的HTML页面、图片、CSS文件、JavaScript文件等。<br>•  这些响应通过TCP连接传输回浏览器。</li>
+<li>浏览器渲染：<br>•  浏览器接收到数据后，会解析HTML、CSS和JavaScript，并将网页渲染显示给用户。</li>
+</ol>
+<p>TCP&#x2F;IP网络模型通常被分为四层：应用层、传输层、网络层和数据链路层。以下是你提到的协议分别属于网络模型的哪一层：</p>
+<ol>
+<li>应用层：<br>•  DNS（域名系统协议）：负责将域名转换为IP地址。<br>•  HTTP&#x2F;HTTPS（超文本传输协议&#x2F;安全超文本传输协议）：用于客户端和服务器之间的请求和响应消息传输。<br>•  FTP&#x2F;SFTP（文件传输协议&#x2F;安全文件传输协议）：用于文件的传输。<br>•  SMTP&#x2F;POP3&#x2F;IMAP（简单邮件传输协议&#x2F;邮局协议&#x2F;互联网消息访问协议）：用于电子邮件的发送和接收。</li>
+<li>传输层：<br>•  TCP（传输控制协议）：提供可靠的、面向连接的数据传输服务。<br>•  UDP（用户数据报协议）：提供不可靠的、无连接的数据传输服务（虽然UDP没有被提及，但它也是传输层的一个重要协议）。</li>
+<li>网络层：<br>•  IP（网际协议）：负责数据包的寻址和路由。<br>•  ICMP（互联网控制消息协议）：用于发送错误消息和网络查询。</li>
+<li>数据链路层：<br>•  ARP（地址解析协议）：将IP地址解析为MAC地址，用于同一局域网内的设备通信。<br>数据链路层还涉及到其他一些协议和机制，如以太网（Ethernet）用于局域网通信，以及各种网络接口卡（NIC）驱动程序等。</li>
+</ol>
+<h2 id="从云服务分布式部署架构理解"><a href="#从云服务分布式部署架构理解" class="headerlink" title="从云服务分布式部署架构理解"></a>从云服务分布式部署架构理解</h2><p>从浏览器输入域名并回车后的过程会涉及到多个网络协议和组件，具体如下：</p>
+<ol>
+<li>DNS解析：<br>•  首先，浏览器会进行DNS解析，将域名转换为IP地址。如果域名对应的服务是分布式部署的，DNS解析可能返回一个负载均衡器的IP地址，或者根据地理位置或其他策略返回不同区域服务器的IP地址。</li>
+<li>负载均衡：<br>•  四层负载均衡：在IP+端口层面进行请求分发，根据IP地址和端口号将流量导向后端的具体服务器。<br>•  七层负载均衡：在应用层进行请求分发，可以根据URL、主机名等应用层信息将请求路由到不同的处理服务器。<br>•  负载均衡器可以根据不同的策略来分配请求，如轮询、最少连接、源IP散列或加权负载均衡。</li>
+<li>网络协议：<br>•  HTTP&#x2F;HTTPS：用于浏览器与服务器之间的请求和响应消息传输。<br>•  TCP&#x2F;IP：负责数据包的寻址和路由。<br>•  UDP：在需要低延迟或高吞吐量的场景中使用，如实时应用、视频流或DNS查询。</li>
+<li>服务发现与注册：<br>•  在分布式系统中，服务实例需要在服务注册中心注册自己，以便负载均衡器或其他服务能够发现并调用它们。常见的服务注册中心包括ETCD、Consul或Zookeeper。</li>
+<li>服务网关：<br>•  服务网关负责路由、过滤和负载均衡，提供统一的服务入口。例如，Spring Cloud Gateway可以作为服务网关。</li>
+<li>熔断器：<br>•  熔断器如Hystrix或Resilience4j，提供故障时的自动切断机制和降级服务，防止系统雪崩。</li>
+<li>配置管理：<br>•  分布式配置中心如Spring Cloud Config或Apollo，用于统一管理配置信息，支持动态更新配置。</li>
+<li>消息队列：<br>•  消息队列如RabbitMQ、Kafka等，用于异步通信和消息传递。</li>
+<li>缓存和数据库：<br>•  分布式缓存如Redis、Memcached，以及分布式数据库如MySQL集群、Cassandra、HBase等，用于存储和查询数据。<br>通过这些组件和协议的协同工作，分布式系统能够处理大量的并发请求，提供高可用性和可扩展性。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/计算机基础/">计算机基础</a>
+    </span>
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2024/10/06/MySQL常见八股文/"><span>MySQL常见八股文</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/10/06/MySQL常见八股文/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-10-06T13:34:56.000Z">
+          2024-10-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="事务的四个特性"><a href="#事务的四个特性" class="headerlink" title="事务的四个特性"></a>事务的四个特性</h2><p>一般来说，衡量事务必须满足四个特性：ACID，即 原子性（Atomicity，或称不可分割性）、一致性（Consistency）、隔离性（Isolation，又称独立性）、持久性（Durability）。</p>
+<p>原子性（Atomicity）：一个事务（transaction）中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被回滚（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。</p>
+<p>一致性（Consistency）：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设规则，这包含资料的精确度、串联性以及后续数据库可以自发性地完成预定的工作。</p>
+<p>隔离性（Isolation）：数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括<strong>读未提交（read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）</strong>。</p>
+<p>持久性（Durability）：事务处理结束后，对数据的修改就是永久的，会持久化到硬盘上，即便系统故障也不会丢失。</p>
+<h2 id="MySQL事务的隔离级别"><a href="#MySQL事务的隔离级别" class="headerlink" title="MySQL事务的隔离级别"></a>MySQL事务的隔离级别</h2><p>MySQL数据库支持四种事务隔离级别，这些级别定义了在并发环境下事务如何相互隔离，以避免不同类型的事务并发问题，如脏读、不可重复读和幻读。以下是四种事务隔离级别及其描述：</p>
+<ol>
+<li><p>READ UNCOMMITTED（读未提交）：<br>•  在这个级别下，事务可以读取到其他事务未提交的数据。这意味着可能会读到脏数据，因为其他事务可能最终会回滚。<br>•  脏读：可以读取到其他事务未提交的数据。<br>•  不可重复读：可能。<br>•  幻读：可能。</p>
+</li>
+<li><p>READ COMMITTED（读已提交）：<br>•  事务只能读取到其他事务已经提交的数据。这是大多数数据库系统的默认隔离级别。<br>•  脏读：不可能。<br>•  不可重复读：可能。<br>•  幻读：可能。</p>
+</li>
+<li><p>REPEATABLE READ（可重复读）：<br>•  事务在整个过程中可以多次读取到相同的数据集。这是MySQL的默认隔离级别（对于InnoDB存储引擎）。<br>•  脏读：不可能。<br>•  不可重复读：不可能。<br>•  幻读：可能（在MySQL中，REPEATABLE READ隔离级别实际上防止了幻读，因为它使用Next-Key Locks）。</p>
+</li>
+<li><p>SERIALIZABLE（串行化）：<br>•  这是最高的隔离级别，事务会完全隔离，事务会依次顺序执行，模拟了事务串行执行的场景。<br>•  脏读：不可能。<br>•  不可重复读：不可能。<br>•  幻读：不可能。</p>
+</li>
+</ol>
+<p>在MySQL中，可以通过以下SQL语句查看和设置事务隔离级别：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看当前会话的事务隔离级别：</span></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@tx_isolation</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看全局事务隔离级别：</span></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@global</span>.tx_isolation;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置当前会话的事务隔离级别：</span></span><br><span class="line"><span class="keyword">SET</span> SESSION TRANSACTION ISOLATION LEVEL [隔离级别];</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置全局事务隔离级别：</span></span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">GLOBAL</span> TRANSACTION ISOLATION LEVEL [隔离级别];</span><br></pre></td></tr></table></figure>
+<p>其中[隔离级别]可以是READ UNCOMMITTED、READ COMMITTED、REPEATABLE READ或SERIALIZABLE中的一个。需要注意的是，更改全局事务隔离级别可能需要具有相应的权限，并且在某些情况下，更改可能不会立即生效，因为MySQL可能需要重启才能应用新的全局设置。</p>
+<h2 id="不可重复读和幻读对事务隔离性的影响"><a href="#不可重复读和幻读对事务隔离性的影响" class="headerlink" title="不可重复读和幻读对事务隔离性的影响"></a>不可重复读和幻读对事务隔离性的影响</h2><p>在数据库事务中，不可重复读（No-repeatable Read）和幻读（Phantom Read）是两种不同的并发问题，它们对事务的隔离性有不同的影响。<br>不可重复读（Non-repeatable read）是数据库事务中的一个并发问题，指的是在一个事务内，多次读取同一数据集合时，由于其他事务的干扰，读取到的结果不一致。<br>对事务隔离性的影响：<br>•  防止不可重复读：在可重复读隔离级别下，事务可以保证在整个事务期间对数据的读取是一致的，即使其他事务对数据进行了修改。<br>•  锁机制：为了实现可重复读，数据库通常会使用行级锁或间隙锁（Gap Locks）来防止其他事务修改或插入那些被当前事务读取的数据行。<br>幻读（Phantom Read）<br>幻读是指在一个事务内，第一次查询某条记录时不存在，但在后续的查询中却出现了，就像“幻影”一样。这通常是因为其他事务插入了新的记录，而这些记录符合当前事务的查询条件。<br>对事务隔离性的影响：<br>•  影响数据一致性：幻读可能会导致事务在逻辑上的数据不一致，尤其是在涉及范围查询和计数的场景中。<br>•  防止幻读的机制：为了防止幻读，数据库需要使用更复杂的锁机制，如Next-Key Locks（行锁和间隙锁的组合），这样可以锁定一个范围，防止其他事务在这个范围内插入新的记录。<br>对事务隔离性的影响总结<br>•  可重复读：提高了事务的隔离性，使得事务在执行期间能够看到一致的数据视图，但可能会因为锁的使用而降低并发性。<br>•  幻读：降低了事务的隔离性，因为它允许其他事务在当前事务执行期间插入新的记录，这可能会导致当前事务的逻辑错误。<br>在实际应用中，不同的数据库管理系统对于可重复读和幻读的处理方式可能有所不同。例如，MySQL的InnoDB存储引擎在可重复读隔离级别下通过Next-Key Locks机制来防止幻读，而其他数据库可能需要更高的隔离级别（如串行化）来防止幻读。选择合适的隔离级别需要在数据一致性和系统并发性之间做出权衡。</p>
+<h2 id="MySQL的存储引擎有哪些"><a href="#MySQL的存储引擎有哪些" class="headerlink" title="MySQL的存储引擎有哪些"></a>MySQL的存储引擎有哪些</h2><p>MySQL支持多种存储引擎，每种存储引擎都有其独特的特点和适用场景。以下是一些常用的MySQL存储引擎及其使用场景：</p>
+<ol>
+<li>InnoDB存储引擎：<br>•  特点：支持事务处理、行级锁定和外键约束，适合需要高并发和数据一致性的应用。<br>•  适用场景：电子商务网站、金融系统等需要事务支持的场景。<br>•  优点：灾难恢复性好、支持事务、使用行级锁、支持外键关联、支持热备份。<br>•  缺点：占用的数据空间相对较大。</li>
+<li>MyISAM存储引擎：<br>•  特点：插入和查询速度快，但不支持事务处理和外键约束，适合读密集型应用。<br>•  适用场景：内容管理系统、日志系统等读多写少的场景。<br>•  优点：读取速度快，不占用大量内存与存储资源。<br>•  缺点：更新机制浪费内存空间，需要依靠OPTIMIZE TABLE来恢复，主机宕机后，MyISAM表易损坏，灾难恢复性不佳。</li>
+<li>Memory存储引擎：<br>•  特点：所有数据存储在内存中，读写速度快，但不支持事务处理和外键约束，数据在数据库重启后会丢失，适合临时数据存储。<br>•  适用场景：会话信息、临时表等需要快速访问的场景。<br>•  优点：提供内存表，显著提高访问数据的速度。<br>•  缺点：服务器重启后数据会丢失，复制维护时需要小心。</li>
+<li>Archive存储引擎：<br>•  特点：提供高压缩存储，适用于存储历史数据或日志数据，只支持最基本的插入和查询功能。<br>•  适用场景：适用于存储历史数据或日志数据的归档。</li>
+<li>CSV存储引擎：<br>•  特点：将数据存储在逗号分隔值的文本文件中，易于导入导出，不支持索引。<br>•  适用场景：数据导入导出，需要将数据存储在可读性强、易编辑的文件中的场景。</li>
+<li>Federated存储引擎：<br>•  特点：允许MySQL服务器访问远程MySQL服务器上的表，类似于分布式数据库。<br>•  适用场景：分布式数据库系统，需要跨多个MySQL服务器访问数据的场景。<br>每种存储引擎都有其特定的优势和限制，选择时应根据具体的业务需求和场景来决定。</li>
+</ol>
+<h2 id="MySQL索引的存储结构为什么是B-树而不是B树"><a href="#MySQL索引的存储结构为什么是B-树而不是B树" class="headerlink" title="MySQL索引的存储结构为什么是B+树而不是B树"></a>MySQL索引的存储结构为什么是B+树而不是B树</h2><p>B树和B+树都是平衡多路查找树，用于索引和存储数据，但它们在数据结构和一些实现细节上有所不同。以下是B树和B+树的主要区别：</p>
+<ol>
+<li>节点结构：<br>•  B树：节点中既包含数据，也包含索引键。每个节点可以包含多个数据项和索引键，数据项和索引键是交替存储的。<br>•  B+树：节点中只包含索引键，不包含数据。数据存储在叶子节点，且叶子节点之间通过指针连接，形成一个链表。</li>
+<li>数据存储位置：<br>•  B树：数据可以存储在树的任何节点中，包括非叶子节点。<br>•  B+树：数据只存储在叶子节点中，非叶子节点仅用于索引。</li>
+<li>查询效率：<br>•  B树：查询可能在非叶子节点结束，因为数据可能存储在非叶子节点。<br>•  B+树：查询必须到达叶子节点，因为所有数据都存储在叶子节点。</li>
+<li>树的高度：<br>•  B树：由于数据分布在所有节点中，树的高度相对较高。<br>•  B+树：由于非叶子节点不存储数据，只存储索引键，树的高度相对较低。</li>
+<li>范围查询：<br>•  B树：进行范围查询时，需要在叶子节点中进行中序遍历。<br>•  B+树：进行范围查询时，可以直接在叶子节点的链表上进行，效率更高。</li>
+<li>磁盘I&#x2F;O：<br>•  B树：由于树的高度较高，磁盘I&#x2F;O次数相对较多。<br>•  B+树：由于树的高度较低，磁盘I&#x2F;O次数相对较少。</li>
+<li>空间利用率：<br>•  B树：节点中存储数据和索引键，空间利用率相对较低。<br>•  B+树：节点中只存储索引键，空间利用率相对较高，可以存储更多的索引键。</li>
+<li>写操作：<br>•  B树：写操作时，可能需要对非叶子节点进行分裂，操作较为复杂。<br>•  B+树：写操作时，只需要对叶子节点进行分裂，操作相对简单。<br>MySQL选择B+树作为索引结构而不是B树，主要有以下几个原因：</li>
+<li>查询性能更优：<br>•  B+树的所有数据都存储在叶子节点中，查询时只需要遍历一次叶子节点即可得到查询结果，而B树的数据既可能存储在非叶子节点中，也可能存储在叶子节点中。B树在查询时需要遍历非叶子节点和叶子节点，效率相对较低。</li>
+<li>磁盘I&#x2F;O次数更少：<br>•  B+树的非叶子节点不存储数据，只存储索引键，因此可以存储更多的索引键，减少了树的高度，使得磁盘I&#x2F;O次数减少，查询更快。</li>
+<li>更适于范围查询：<br>•  B+树的叶子节点通过指针相互连接，形成一个有序链表，方便顺序访问和范围查询。在B树中进行范围查询时，需要对B树进行中序遍历，而B+树的范围查询只需要对链表进行遍历即可。</li>
+<li>查询效率更稳定：<br>•  B树的查询时间复杂度在1到树高之间，分别对应记录在根节点和叶节点，而B+树的查询复杂度则稳定为树高，因为所有数据都在叶节点。</li>
+<li>空间利用率更高：<br>•  由于B+树的非叶子节点不存储数据，只存储索引键，因此在相同磁盘空间下，B+树可以存储更多的索引键，提高了空间利用率。</li>
+<li>更适合外部存储：<br>•  B+树由于内节点无data域，每个节点能索引的范围更大更精确，使得B+树单次磁盘IO的信息量大于B树，从而减少了查询时需要的磁盘IO次数。<br>综上所述，B+树在查询性能、磁盘I&#x2F;O次数、范围查询以及查询效率稳定性方面相较于B树都有显著优势，这些特性使得B+树更适合作为MySQL数据库的索引结构。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/关系数据库/">关系数据库</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2024/06/18/常见的网络攻击方式/"><span>网络攻击方式</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/06/18/常见的网络攻击方式/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-06-18T02:47:04.000Z">
+          2024-06-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="常见的网络攻击方式"><a href="#常见的网络攻击方式" class="headerlink" title="常见的网络攻击方式"></a>常见的网络攻击方式</h2><ol>
+<li>D-Dos攻击，分布式Dos攻击，即大批量请求目标服务器暴露出来的接口，使其无法正常响应其他用户的请求；</li>
+<li>SQL注入；</li>
+<li>DNS欺骗，攻击者伪造DNS响应，将用户重定向到恶意网站；</li>
+<li>中间人攻击（篡改SSL证书，替换加密信息）；</li>
+<li>会话劫持，窃取用户会话标识符，如cookie，接管用户的会话；</li>
+<li>跨站脚本攻击（浏览器跨域校验）；</li>
+<li>端口扫描（Port Scanning）：攻击者扫描网络以查找开放的端口，以确定潜在的入侵点；</li>
+<li>缓冲区溢出攻击，输入的数据超出程序缓冲区的容量，导致程序崩溃或执行攻击者的代码；</li>
+</ol>
+<h2 id="如何预防D-Dos攻击"><a href="#如何预防D-Dos攻击" class="headerlink" title="如何预防D-Dos攻击"></a>如何预防D-Dos攻击</h2><ol>
+<li>ip限制，设置ip白名单；</li>
+<li>ip限流，限制每个ip单位时间内的请求次数；</li>
+<li>加缓存中间件，如redis，消息队列中间件等，避免短时间内大量请求直接访问到数据库；</li>
+<li>接口设计优化，接口涉及IO即访问数据库的尽量不用GET请求，入参校验cookie，或token这些；</li>
+<li>使用高防高IP服务器；</li>
+<li>分布式部署，保证可用性；</li>
+<li>加一层CDN，让CDN抗住攻击；</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/网络/">网络</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/网络攻防/">网络攻防</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2024/03/25/理解golang的Context设计/"><span>理解golang的Context设计</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/03/25/理解golang的Context设计/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-03-25T03:22:57.000Z">
+          2024-03-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="Context的使用场景"><a href="#Context的使用场景" class="headerlink" title="Context的使用场景"></a>Context的使用场景</h2><p>Context的设计初衷就是为了在多个goroutine之间传递和同步取消信号，以减少资源的消耗和占用，具体有以下使用场景：</p>
+<ol>
+<li>作为请求API的调用方&amp;被调用方时的超时控制，通常用于数据库或者网络连接的超时控制；</li>
+<li>作为各协程之间共用的变量池例如Gin框架中各中间件链式调用时互相传递Context；<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// Deadline returns the time when work done on behalf of this context </span></span><br><span class="line">    <span class="comment">// should be canceled. </span></span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="type">bool</span>)</span><br><span class="line"><span class="comment">// Done returns a channel that&#x27;s closed when work done on behalf of this</span></span><br><span class="line">	<span class="comment">// context should be canceled.</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"><span class="comment">// If Done is not yet closed, Err returns nil.</span></span><br><span class="line">	<span class="comment">// If Done is closed, Err returns a non-nil error explaining why:</span></span><br><span class="line">	<span class="comment">// Canceled if the context was canceled</span></span><br><span class="line">	<span class="comment">// or DeadlineExceeded if the context&#x27;s deadline passed.</span></span><br><span class="line">	Err() <span class="type">error</span></span><br><span class="line"><span class="comment">// Value returns the value associated with this context for key, or nil</span></span><br><span class="line">	<span class="comment">// if no value is associated with key. Successive calls to Value with</span></span><br><span class="line">	<span class="comment">// the same key returns the same result.</span></span><br><span class="line">	Value(key any) any</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Context超时控制的实现原理"><a href="#Context超时控制的实现原理" class="headerlink" title="Context超时控制的实现原理"></a>Context超时控制的实现原理</h2><p>通过<code>Done()</code>传递超时信号，并使用Select监听超时信号是否传入，官方注释如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Done is provided for use in select statements:</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">//  // Stream generates values with DoSomething and sends them to out</span></span><br><span class="line">	<span class="comment">//  // until DoSomething returns an error or ctx.Done is closed.</span></span><br><span class="line">	 <span class="function"><span class="keyword">func</span> <span class="title">Stream</span><span class="params">(ctx context.Context, out <span class="keyword">chan</span>&lt;- Value)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	 	<span class="keyword">for</span> &#123;</span><br><span class="line">	 		v, err := DoSomething(ctx)</span><br><span class="line">	 		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	 			<span class="keyword">return</span> err</span><br><span class="line">	 		&#125;</span><br><span class="line">	 		<span class="keyword">select</span> &#123;</span><br><span class="line">	 		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">	 			<span class="keyword">return</span> ctx.Err()</span><br><span class="line">	 		<span class="keyword">case</span> out &lt;- v:</span><br><span class="line">	 		&#125;</span><br><span class="line">	 	&#125;</span><br><span class="line">	 &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Context的Keys池如何保证线程安全"><a href="#Context的Keys池如何保证线程安全" class="headerlink" title="Context的Keys池如何保证线程安全"></a>Context的Keys池如何保证线程安全</h2><p>官方<code>context</code>包下的Context接口内部对Keys没有使用传统锁的机制来保证线程安全，每次对<code>Context</code>的操作都会创建一个新的上下文实例，而不是改变现有的实例（通过<code>WithDeadline()</code>,<code>WithTimeOut()</code>和<code>WithCancle()</code>这些方法派生父节点上下文的副本），这样的设计避免了对共享资源的直接修改，从而避免了锁的需要。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithValue</span><span class="params">(parent Context, key, val any)</span></span> Context &#123;</span><br><span class="line">	<span class="keyword">if</span> parent == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;cannot create context from nil parent&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;nil key&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !reflectlite.TypeOf(key).Comparable() &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;key is not comparable&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;valueCtx&#123;parent, key, val&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Gin框架实现的<code>Context</code>内部是通过读写锁保证Key-Value变量池的线程安全</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set is used to store a new key/value pair exclusively for this context.</span></span><br><span class="line"><span class="comment">// It also lazy initializes  c.Keys if it was not used previously.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span></span> Set(key <span class="type">string</span>, value any) &#123;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.Unlock()</span><br><span class="line">	<span class="keyword">if</span> c.Keys == <span class="literal">nil</span> &#123;</span><br><span class="line">		c.Keys = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]any)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c.Keys[key] = value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get returns the value for the given key, ie: (value, true).</span></span><br><span class="line"><span class="comment">// If the value does not exist it returns (nil, false)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span></span> Get(key <span class="type">string</span>) (value any, exists <span class="type">bool</span>) &#123;</span><br><span class="line">	c.mu.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.RUnlock()</span><br><span class="line">	value, exists = c.Keys[key]</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/08/17/记录设计验权系统时的一些随想/"><span>记录设计验权系统时的一些随想</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/08/17/记录设计验权系统时的一些随想/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-08-17T12:49:33.000Z">
+          2023-08-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="OAuth2-0协议内容"><a href="#OAuth2-0协议内容" class="headerlink" title="OAuth2.0协议内容"></a>OAuth2.0协议内容</h2><p>OAuth 2.0 是一个行业标准的协议，用于授权。它允许第三方应用获取有限的访问权限，而无需将用户名和密码提供给第三方应用。OAuth 2.0 专注于客户端开发者的简易性，同时为Web应用、桌面应用、手机和起居室设备提供专门的认证流程。以下是 OAuth 2.0 协议的核心内容和组成部分：</p>
+<ol>
+<li>角色：<br>•  资源所有者（Resource Owner）：能够授权访问其资源的用户。<br>•  资源服务器（Resource Server）：存储受保护资源的服务器，只有经过授权的客户端才能访问。<br>•  客户端（Client）：请求访问受保护资源的应用程序。<br>•  授权服务器（Authorization Server）：负责颁发访问令牌给客户端。</li>
+<li>流程：<br>•  授权码模式（Authorization Code Grant）：客户端引导资源所有者至授权服务器，用户登录并授权后，授权服务器返回一个授权码给客户端，客户端使用该码换取访问令牌。<br>•  密码模式（Resource Owner Password Credentials Grant）：客户端直接使用资源所有者的用户名和密码向授权服务器申请访问令牌。<br>•  客户端模式（Client Credentials Grant）：客户端直接向授权服务器申请访问令牌，适用于客户端代表自己访问资源的场景。<br>•  隐式模式（Implicit Grant）：适用于纯前端应用，客户端引导资源所有者至授权服务器，用户授权后，授权服务器直接返回访问令牌给客户端。<br>•  设备模式（Device Authorization Grant）：适用于无法通过常规流程进行用户交互的设备，例如物联网设备。</li>
+<li>令牌：<br>•  访问令牌（Access Token）：允许客户端访问受保护资源的令牌。<br>•  刷新令牌（Refresh Token）：用于获取新的访问令牌，通常在访问令牌过期后使用。</li>
+<li>安全性：<br>•  OAuth 2.0 要求使用HTTPS来保护所有OAuth流程中的通信，以防止令牌被截获。<br>•  访问令牌和刷新令牌应该是随机的、不可预测的，并且具有足够的长度。<br>•  客户端必须验证授权服务器的重定向URI。</li>
+<li>扩展性：<br>•  OAuth 2.0 支持多种扩展，例如开放ID连接（OpenID Connect），它允许在OAuth 2.0授权过程中传递用户身份信息。<br>OAuth 2.0 协议是复杂的，并且需要根据具体的应用场景和安全要求来正确实施。它旨在提供一个安全、灵活且可扩展的授权框架，以满足不同应用的需求。</li>
+</ol>
+<h2 id="JWT和Cookie的使用场景差异"><a href="#JWT和Cookie的使用场景差异" class="headerlink" title="JWT和Cookie的使用场景差异"></a>JWT和Cookie的使用场景差异</h2><p>JWT（JSON Web Tokens）和Cookie是两种不同的技术，它们在Web应用中用于身份验证和信息传递，但它们之间存在一些关键的区别：</p>
+<ol>
+<li>存储位置：<br>•  Cookie：存储在客户端浏览器中，由浏览器自动处理。<br>•  JWT：可以存储在客户端（通常作为URL的一部分、存储在Cookie中或者LocalStorage&#x2F;SessionStorage中），也可以存储在服务端。</li>
+<li>安全性：<br>•  Cookie：可以设置为仅通过HTTPS传输（Secure标志），并且可以设置HttpOnly标志，使得JavaScript无法访问，减少XSS攻击的风险。<br>•  JWT：本身是自包含的，包含所有必要的信息，因此不需要在服务器上存储会话信息。但是，JWT需要通过HTTPS传输以防止中间人攻击，且应使用强算法（如RS256）签名以防止篡改。</li>
+<li>大小：<br>•  Cookie：大小受限（通常每个域名限制为20-30个Cookie，每个Cookie大小限制在4KB左右）。<br>•  JWT：理论上可以更大，但因为需要在HTTP请求头中传输，所以也不宜过大，以免影响性能。</li>
+<li>性能：<br>•  Cookie：每次请求都会自动发送，可能会增加请求的大小，但不需要修改HTTP请求头。<br>•  JWT：需要在每次请求的HTTP头中明确指定，可能会增加请求头的大小，但不需要在服务器上查找会话信息。</li>
+<li>会话管理：<br>•  Cookie：依赖于服务器端的会话存储，可以很容易地实现会话的注销和失效。<br>•  JWT：由于是自包含的，不需要服务器存储会话信息，但一旦发出，除非过期，否则不能轻易撤销。</li>
+<li>跨域访问：<br>•  Cookie：受到同源策略的限制，不能跨域访问。<br>•  JWT：由于是作为请求的一部分发送，可以跨域使用。</li>
+<li>用途：<br>•  Cookie：主要用于跟踪会话状态，也可以用于存储用户偏好等信息。<br>•  JWT：主要用于身份验证和信息交换，尤其是在分布式系统中。<br>总的来说，Cookie更适合用于会话管理，而JWT更适合用于分布式系统中的身份验证和信息交换。选择使用哪种技术取决于具体的应用场景和需求。</li>
+</ol>
+<h2 id="JWT-Json-Web-Tokens-包含哪些信息"><a href="#JWT-Json-Web-Tokens-包含哪些信息" class="headerlink" title="JWT(Json Web Tokens)包含哪些信息"></a>JWT(Json Web Tokens)包含哪些信息</h2><p>JWT（JSON Web Tokens）是一种紧凑且自包含的方式，用于在各方之间以JSON对象的形式安全地传输信息。JWT通常包含三个部分，用点.分隔，分别是Header（头部）、Payload（负载）和Signature（签名）。下面是每个部分通常包含的信息：</p>
+<ol>
+<li>Header（头部）：<br>•  typ：类型，通常为JWT。<br>•  alg：指定签名算法，如HS256（HMAC SHA-256）或RS256（RSA签名）。</li>
+<li>Payload（负载）：<br>•  iss：发行人（Issuer），指的是token签发的主体。<br>•  exp：过期时间（Expiration Time），token的有效期。<br>•  iat：发行时间（Issued At），token签发的时间。<br>•  nbf：生效时间（Not Before），token在此时间前不可用。<br>•  sub：主题（Subject），通常指用户的唯一标识。<br>•  aud：受众（Audience），token的预期接收者。<br>•  jti：JWT ID，提供token的唯一标识，防止重复使用。<br>•  自定义声明：除了以上标准声明外，还可以包含其他业务相关的自定义声明。</li>
+<li>Signature（签名）：<br>•  签名部分是由Header指定的算法、一个秘密（对于HS算法）或公钥&#x2F;私钥对（对于RS或ES算法）以及Header和Payload的编码后的字符串组成的。签名用于验证消息在传输过程中未被篡改，并且，对于使用私钥签名的token，还可以验证发送者的身份。<br>JWT的结构如下所示：<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Header&gt;.&lt;Payload&gt;.&lt;Signature&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>•  Header和Payload通常使用Base64Url编码。<br>•  Signature是使用Header中指定的算法和密钥对Header和Payload的编码字符串进行签名的结果。<br>JWT的设计目的是在各方之间安全地传输信息，同时确保信息的完整性和可验证性。由于JWT可以包含敏感信息，因此在使用JWT时，必须通过HTTPS等安全协议传输，以防止中间人攻击。</p>
+<h2 id="使用哈希加密算法加密保存敏感信息的一些注意事项"><a href="#使用哈希加密算法加密保存敏感信息的一些注意事项" class="headerlink" title="使用哈希加密算法加密保存敏感信息的一些注意事项"></a>使用哈希加密算法加密保存敏感信息的一些注意事项</h2><p>使用哈希加密算法加密保存敏感信息时，需要注意以下几个重要的事项：</p>
+<ol>
+<li>选择合适的哈希算法：<br>•  应使用当前认为安全的哈希算法，如SHA-256或SHA-512，避免使用已不安全的算法，如MD5和SHA-1。</li>
+<li>盐值的使用：<br>•  为了防止彩虹表攻击，每个密码在哈希前应该加上一个唯一的盐值。盐值可以增加密码破解的难度。</li>
+<li>哈希输出长度：<br>•  哈希输出应足够长（建议256位以上），以防止暴力破解和生日攻击。</li>
+<li>安全存储哈希和盐值：<br>•  存储哈希值时，应将盐值与哈希值一起存储，但盐值本身不需要保密。</li>
+<li>避免时序和功耗分析攻击：<br>•  使用恒定时间和随机化哈希算法，以防止通过分析算法执行来破解哈希值。</li>
+<li>密码轮换和多因素身份验证：<br>•  在遭受攻击后，仅存储哈希值是不够的。应采用密码轮换和多因素身份验证。</li>
+<li>数据传输安全：<br>•  敏感数据的传输应通过安全的通信通道（如HTTPS&#x2F;TLS）进行，以防止中间人攻击。</li>
+<li>使用最新的安全标准：<br>•  加密与哈希算法不断发展，应定期更新应用程序，使用最新的安全标准和库。</li>
+<li>密码存储格式：<br>•  一些哈希算法（如bcrypt）的哈希值包含了算法标识、成本因子和盐值，这些信息都嵌入在哈希值中，无需单独存储。</li>
+<li>密码长度限制：<br>•  某些哈希算法（如bcrypt）对密码长度有限制，若密码超出此限制，需要进行额外处理。</li>
+<li>不可逆性：<br>•  哈希算法的设计理念和加密原理确保了它在密码保护中的不可替代性。通过盐、成本因子以及不可逆的特性，可以有效抵御暴力破解和彩虹表攻击。</li>
+<li>安全开发实践：<br>•  采用安全的开发实践对于保障敏感信息的安全至关重要，包括进行代码审查、定期的安全培训、漏洞扫描等。<br>遵循这些注意事项可以帮助提高敏感信息的安全性，保护用户数据免受恶意攻击。</li>
+</ol>
+<h2 id="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"><a href="#MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势" class="headerlink" title="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"></a>MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势</h2><p>MD5不如SHA-256安全的原因主要包括以下几点：</p>
+<ol>
+<li>哈希长度：<br>•  MD5产生128位的哈希值，而SHA-256产生256位的哈希值。更长的哈希值意味着更大的哈希空间，从而使得碰撞的概率更小，提高了安全性。</li>
+<li>抗碰撞性：<br>•  MD5已被证明存在漏洞，容易受到碰撞攻击，即可以找到两个不同的输入值，它们产生相同的MD5哈希值。相比之下，SHA-256对碰撞攻击的抵抗力更强，目前还没有发现有效的攻击方法。</li>
+<li>安全性：<br>•  MD5的安全性较弱，存在已知的漏洞，而SHA-256目前被认为更安全，没有发现严重的漏洞。</li>
+<li>计算性能：<br>•  尽管MD5在计算速度上比SHA-256快，但安全性是更重要的考量因素。SHA-256虽然计算速度较慢，但由于其更长的哈希长度，提供了更高的安全性。</li>
+<li>应用场景：<br>•  SHA-256由于其高安全性，被广泛应用于数字签名、区块链、文件校验等需要高安全性保障的场景。而MD5则更多用于一些对安全性要求不高的场景。</li>
+<li>雪崩效应：<br>•  SHA-256具有高的雪崩效应，即输入的微小变化会导致输出的哈希值发生巨大变化，这增强了其安全性。</li>
+<li>密码学弱点：<br>•  MD5的密码学弱点已经被广泛研究和利用，包括长度扩展攻击和碰撞攻击，而SHA-256在这方面的表现更为稳健。<br>综上所述，SHA-256在安全性、抗碰撞性、输出长度等方面都优于MD5，因此在需要高安全性的应用中，SHA-256是更安全的选择。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/工作笔记/">工作笔记</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/JWT/">JWT</a><a href="/tags/OAuth2-0/">OAuth2.0</a><a href="/tags/哈希算法/">哈希算法</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/07/17/对GPM协程调度模型的个人理解/"><span>GPM协程调度模型的工作原理</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/07/17/对GPM协程调度模型的个人理解/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-07-17T13:35:28.000Z">
+          2023-07-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>理解GPM协程调度模型工作原理之前，先了解下<strong>协程、线程、进程之间的区别：</strong><br>    进程是操作系统进行资源分配的基本单位，线程是CPU调度的基本单位，其中协程相对于CPU调度的线程可以区分为用户态的线程和内核态的线程，实际运行时，CPU仍然只切换内核态的线程，协程可以通过协程调度器，让多个用户态的线程队列和一个CPU轮转期内核态的线程绑定运行也即在用户态实现并发，以达到减少线程切换时CPU资源浪费的目的。<br>协程的目的是在执行多线程任务时，减少CPU在切换线程上的调度消耗，以达到提高CPU的利用率。</p>
+<p>GPM的G是goroutine协程，P是processor处理器是抽象的处理器，包含了协程运行的环境资源，M是Machine线程，内核状态的线程。goroutine相比于广义的协程，占用更小的内存空间，只占几KB的内存（线程占用约4MB，广义协程也是MB级别），调度更加灵活</p>
+<p>G 表示 Goroutine，也就是 Go 语言中的轻量级线程。Goroutine 是一种并发执行的抽象，它比传统的线程更轻量、更高效，并且可以很容易地创建和销毁。</p>
+<p>P 表示 Processor，也可以理解为上下文处理器。每个 P 其实就是一个相当于操作系统线程的抽象，负责执行 Goroutine。P 的个数可以通过 <code>GOMAXPROCS</code> 环境变量或者 <code>runtime.GOMAXPROCS</code> 函数进行设置。</p>
+<p>M 表示 Machine，也就是操作系统线程和内核的直接映射，它负责管理真实的线程资源，并与操作系统进行交互。在 GPM 调度模型中，有多个 M，可以与多个 P 绑定。</p>
+<p>N 表示工作队列的长度。工作队列用来存放待执行的 Goroutine，当某个 P 处于空闲状态时，会从工作队列中取出 Goroutine 执行。</p>
+<p>GPM 调度模型的工作流程如下：</p>
+<ol>
+<li>当创建一个 Goroutine 时，它被放入当前 P 的本地队列（local run queue）中。</li>
+<li>当本地队列为空时，P 会尝试从全局队列（global run queue）中偷取 Goroutine。</li>
+<li>如果全局队列也为空，P 则会去其他空闲的 P 偷取 Goroutine。</li>
+<li>当 P 获取到 Goroutine 后，将其放入自己的本地队列并执行。</li>
+<li>P 执行完毕后，会检查是否需要进行垃圾回收操作。</li>
+<li>若某个 P 长时间没有进展（例如发生了系统调用或者进入了休眠状态），它会释放与之关联的 M，并允许其他 Goroutine 使用。</li>
+<li>被释放的 M 可以绑定到其他的 P，并开始执行新的 Goroutine。</li>
+</ol>
+<p>总结起来，GPM 调度模型通过将 Goroutine 分配给不同的 P 来实现并发执行，同时利用工作队列和偷取策略来平衡负载。这种调度模型在高并发、异步执行的场景下表现出色，使得开发者可以轻松地编写高效、高并发的程序。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
   <article>
 
   
@@ -106,7 +694,21 @@
     <div class="article-meta pull-left">
 
     
+      
 
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/自娱自乐/">自娱自乐</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/python/">python</a><a href="/tags/pygame/">pygame</a>
+    </span>
     
 
     </div>

@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MySQL常见八股文 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="事务的四个特性一般来说，衡量事务必须满足四个特性：ACID，即 原子性（Atomicity，或称不可分割性）、一致性（Consistency）、隔离性（Isolation，又称独立性）、持久性（Durability）。
+原子性（Atomicity）：一个事务（transaction）中的所有操作，要">
+  
+
+  
+  
+  <meta name="keywords" content="关系数据库">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="MySQL常见八股文"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>MySQL常见八股文</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/10/06/MySQL常见八股文/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-10-06T13:34:56.000Z">
+          2024-10-06
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="事务的四个特性"><a href="#事务的四个特性" class="headerlink" title="事务的四个特性"></a>事务的四个特性</h2><p>一般来说，衡量事务必须满足四个特性：ACID，即 原子性（Atomicity，或称不可分割性）、一致性（Consistency）、隔离性（Isolation，又称独立性）、持久性（Durability）。</p>
+<p>原子性（Atomicity）：一个事务（transaction）中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被回滚（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。</p>
+<p>一致性（Consistency）：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设规则，这包含资料的精确度、串联性以及后续数据库可以自发性地完成预定的工作。</p>
+<p>隔离性（Isolation）：数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括<strong>读未提交（read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）</strong>。</p>
+<p>持久性（Durability）：事务处理结束后，对数据的修改就是永久的，会持久化到硬盘上，即便系统故障也不会丢失。</p>
+<h2 id="MySQL事务的隔离级别"><a href="#MySQL事务的隔离级别" class="headerlink" title="MySQL事务的隔离级别"></a>MySQL事务的隔离级别</h2><p>MySQL数据库支持四种事务隔离级别，这些级别定义了在并发环境下事务如何相互隔离，以避免不同类型的事务并发问题，如脏读、不可重复读和幻读。以下是四种事务隔离级别及其描述：</p>
+<ol>
+<li><p>READ UNCOMMITTED（读未提交）：<br>•  在这个级别下，事务可以读取到其他事务未提交的数据。这意味着可能会读到脏数据，因为其他事务可能最终会回滚。<br>•  脏读：可以读取到其他事务未提交的数据。<br>•  不可重复读：可能。<br>•  幻读：可能。</p>
+</li>
+<li><p>READ COMMITTED（读已提交）：<br>•  事务只能读取到其他事务已经提交的数据。这是大多数数据库系统的默认隔离级别。<br>•  脏读：不可能。<br>•  不可重复读：可能。<br>•  幻读：可能。</p>
+</li>
+<li><p>REPEATABLE READ（可重复读）：<br>•  事务在整个过程中可以多次读取到相同的数据集。这是MySQL的默认隔离级别（对于InnoDB存储引擎）。<br>•  脏读：不可能。<br>•  不可重复读：不可能。<br>•  幻读：可能（在MySQL中，REPEATABLE READ隔离级别实际上防止了幻读，因为它使用Next-Key Locks）。</p>
+</li>
+<li><p>SERIALIZABLE（串行化）：<br>•  这是最高的隔离级别，事务会完全隔离，事务会依次顺序执行，模拟了事务串行执行的场景。<br>•  脏读：不可能。<br>•  不可重复读：不可能。<br>•  幻读：不可能。</p>
+</li>
+</ol>
+<p>在MySQL中，可以通过以下SQL语句查看和设置事务隔离级别：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看当前会话的事务隔离级别：</span></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@tx_isolation</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看全局事务隔离级别：</span></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@global</span>.tx_isolation;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置当前会话的事务隔离级别：</span></span><br><span class="line"><span class="keyword">SET</span> SESSION TRANSACTION ISOLATION LEVEL [隔离级别];</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置全局事务隔离级别：</span></span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">GLOBAL</span> TRANSACTION ISOLATION LEVEL [隔离级别];</span><br></pre></td></tr></table></figure>
+<p>其中[隔离级别]可以是READ UNCOMMITTED、READ COMMITTED、REPEATABLE READ或SERIALIZABLE中的一个。需要注意的是，更改全局事务隔离级别可能需要具有相应的权限，并且在某些情况下，更改可能不会立即生效，因为MySQL可能需要重启才能应用新的全局设置。</p>
+<h2 id="不可重复读和幻读对事务隔离性的影响"><a href="#不可重复读和幻读对事务隔离性的影响" class="headerlink" title="不可重复读和幻读对事务隔离性的影响"></a>不可重复读和幻读对事务隔离性的影响</h2><p>在数据库事务中，不可重复读（No-repeatable Read）和幻读（Phantom Read）是两种不同的并发问题，它们对事务的隔离性有不同的影响。<br>不可重复读（Non-repeatable read）是数据库事务中的一个并发问题，指的是在一个事务内，多次读取同一数据集合时，由于其他事务的干扰，读取到的结果不一致。<br>对事务隔离性的影响：<br>•  防止不可重复读：在可重复读隔离级别下，事务可以保证在整个事务期间对数据的读取是一致的，即使其他事务对数据进行了修改。<br>•  锁机制：为了实现可重复读，数据库通常会使用行级锁或间隙锁（Gap Locks）来防止其他事务修改或插入那些被当前事务读取的数据行。<br>幻读（Phantom Read）<br>幻读是指在一个事务内，第一次查询某条记录时不存在，但在后续的查询中却出现了，就像“幻影”一样。这通常是因为其他事务插入了新的记录，而这些记录符合当前事务的查询条件。<br>对事务隔离性的影响：<br>•  影响数据一致性：幻读可能会导致事务在逻辑上的数据不一致，尤其是在涉及范围查询和计数的场景中。<br>•  防止幻读的机制：为了防止幻读，数据库需要使用更复杂的锁机制，如Next-Key Locks（行锁和间隙锁的组合），这样可以锁定一个范围，防止其他事务在这个范围内插入新的记录。<br>对事务隔离性的影响总结<br>•  可重复读：提高了事务的隔离性，使得事务在执行期间能够看到一致的数据视图，但可能会因为锁的使用而降低并发性。<br>•  幻读：降低了事务的隔离性，因为它允许其他事务在当前事务执行期间插入新的记录，这可能会导致当前事务的逻辑错误。<br>在实际应用中，不同的数据库管理系统对于可重复读和幻读的处理方式可能有所不同。例如，MySQL的InnoDB存储引擎在可重复读隔离级别下通过Next-Key Locks机制来防止幻读，而其他数据库可能需要更高的隔离级别（如串行化）来防止幻读。选择合适的隔离级别需要在数据一致性和系统并发性之间做出权衡。</p>
+<h2 id="MySQL的存储引擎有哪些"><a href="#MySQL的存储引擎有哪些" class="headerlink" title="MySQL的存储引擎有哪些"></a>MySQL的存储引擎有哪些</h2><p>MySQL支持多种存储引擎，每种存储引擎都有其独特的特点和适用场景。以下是一些常用的MySQL存储引擎及其使用场景：</p>
+<ol>
+<li>InnoDB存储引擎：<br>•  特点：支持事务处理、行级锁定和外键约束，适合需要高并发和数据一致性的应用。<br>•  适用场景：电子商务网站、金融系统等需要事务支持的场景。<br>•  优点：灾难恢复性好、支持事务、使用行级锁、支持外键关联、支持热备份。<br>•  缺点：占用的数据空间相对较大。</li>
+<li>MyISAM存储引擎：<br>•  特点：插入和查询速度快，但不支持事务处理和外键约束，适合读密集型应用。<br>•  适用场景：内容管理系统、日志系统等读多写少的场景。<br>•  优点：读取速度快，不占用大量内存与存储资源。<br>•  缺点：更新机制浪费内存空间，需要依靠OPTIMIZE TABLE来恢复，主机宕机后，MyISAM表易损坏，灾难恢复性不佳。</li>
+<li>Memory存储引擎：<br>•  特点：所有数据存储在内存中，读写速度快，但不支持事务处理和外键约束，数据在数据库重启后会丢失，适合临时数据存储。<br>•  适用场景：会话信息、临时表等需要快速访问的场景。<br>•  优点：提供内存表，显著提高访问数据的速度。<br>•  缺点：服务器重启后数据会丢失，复制维护时需要小心。</li>
+<li>Archive存储引擎：<br>•  特点：提供高压缩存储，适用于存储历史数据或日志数据，只支持最基本的插入和查询功能。<br>•  适用场景：适用于存储历史数据或日志数据的归档。</li>
+<li>CSV存储引擎：<br>•  特点：将数据存储在逗号分隔值的文本文件中，易于导入导出，不支持索引。<br>•  适用场景：数据导入导出，需要将数据存储在可读性强、易编辑的文件中的场景。</li>
+<li>Federated存储引擎：<br>•  特点：允许MySQL服务器访问远程MySQL服务器上的表，类似于分布式数据库。<br>•  适用场景：分布式数据库系统，需要跨多个MySQL服务器访问数据的场景。<br>每种存储引擎都有其特定的优势和限制，选择时应根据具体的业务需求和场景来决定。</li>
+</ol>
+<h2 id="MySQL索引的存储结构为什么是B-树而不是B树"><a href="#MySQL索引的存储结构为什么是B-树而不是B树" class="headerlink" title="MySQL索引的存储结构为什么是B+树而不是B树"></a>MySQL索引的存储结构为什么是B+树而不是B树</h2><p>B树和B+树都是平衡多路查找树，用于索引和存储数据，但它们在数据结构和一些实现细节上有所不同。以下是B树和B+树的主要区别：</p>
+<ol>
+<li>节点结构：<br>•  B树：节点中既包含数据，也包含索引键。每个节点可以包含多个数据项和索引键，数据项和索引键是交替存储的。<br>•  B+树：节点中只包含索引键，不包含数据。数据存储在叶子节点，且叶子节点之间通过指针连接，形成一个链表。</li>
+<li>数据存储位置：<br>•  B树：数据可以存储在树的任何节点中，包括非叶子节点。<br>•  B+树：数据只存储在叶子节点中，非叶子节点仅用于索引。</li>
+<li>查询效率：<br>•  B树：查询可能在非叶子节点结束，因为数据可能存储在非叶子节点。<br>•  B+树：查询必须到达叶子节点，因为所有数据都存储在叶子节点。</li>
+<li>树的高度：<br>•  B树：由于数据分布在所有节点中，树的高度相对较高。<br>•  B+树：由于非叶子节点不存储数据，只存储索引键，树的高度相对较低。</li>
+<li>范围查询：<br>•  B树：进行范围查询时，需要在叶子节点中进行中序遍历。<br>•  B+树：进行范围查询时，可以直接在叶子节点的链表上进行，效率更高。</li>
+<li>磁盘I&#x2F;O：<br>•  B树：由于树的高度较高，磁盘I&#x2F;O次数相对较多。<br>•  B+树：由于树的高度较低，磁盘I&#x2F;O次数相对较少。</li>
+<li>空间利用率：<br>•  B树：节点中存储数据和索引键，空间利用率相对较低。<br>•  B+树：节点中只存储索引键，空间利用率相对较高，可以存储更多的索引键。</li>
+<li>写操作：<br>•  B树：写操作时，可能需要对非叶子节点进行分裂，操作较为复杂。<br>•  B+树：写操作时，只需要对叶子节点进行分裂，操作相对简单。<br>MySQL选择B+树作为索引结构而不是B树，主要有以下几个原因：</li>
+<li>查询性能更优：<br>•  B+树的所有数据都存储在叶子节点中，查询时只需要遍历一次叶子节点即可得到查询结果，而B树的数据既可能存储在非叶子节点中，也可能存储在叶子节点中。B树在查询时需要遍历非叶子节点和叶子节点，效率相对较低。</li>
+<li>磁盘I&#x2F;O次数更少：<br>•  B+树的非叶子节点不存储数据，只存储索引键，因此可以存储更多的索引键，减少了树的高度，使得磁盘I&#x2F;O次数减少，查询更快。</li>
+<li>更适于范围查询：<br>•  B+树的叶子节点通过指针相互连接，形成一个有序链表，方便顺序访问和范围查询。在B树中进行范围查询时，需要对B树进行中序遍历，而B+树的范围查询只需要对链表进行遍历即可。</li>
+<li>查询效率更稳定：<br>•  B树的查询时间复杂度在1到树高之间，分别对应记录在根节点和叶节点，而B+树的查询复杂度则稳定为树高，因为所有数据都在叶节点。</li>
+<li>空间利用率更高：<br>•  由于B+树的非叶子节点不存储数据，只存储索引键，因此在相同磁盘空间下，B+树可以存储更多的索引键，提高了空间利用率。</li>
+<li>更适合外部存储：<br>•  B+树由于内节点无data域，每个节点能索引的范围更大更精确，使得B+树单次磁盘IO的信息量大于B树，从而减少了查询时需要的磁盘IO次数。<br>综上所述，B+树在查询性能、磁盘I&#x2F;O次数、范围查询以及查询效率稳定性方面相较于B树都有显著优势，这些特性使得B+树更适合作为MySQL数据库的索引结构。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/关系数据库/">关系数据库</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

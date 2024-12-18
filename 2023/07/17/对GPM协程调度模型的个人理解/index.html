@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>GPM协程调度模型的工作原理 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="理解GPM协程调度模型工作原理之前，先了解下协程、线程、进程之间的区别：    进程是操作系统进行资源分配的基本单位，线程是CPU调度的基本单位，其中协程相对于CPU调度的线程可以区分为用户态的线程和内核态的线程，实际运行时，CPU仍然只切换内核态的线程，协程可以通过协程调度器，让多个用户态的线程队">
+  
+
+  
+  
+  <meta name="keywords" content="golang">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="GPM协程调度模型的工作原理"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>GPM协程调度模型的工作原理</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/07/17/对GPM协程调度模型的个人理解/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-07-17T13:35:28.000Z">
+          2023-07-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>理解GPM协程调度模型工作原理之前，先了解下<strong>协程、线程、进程之间的区别：</strong><br>    进程是操作系统进行资源分配的基本单位，线程是CPU调度的基本单位，其中协程相对于CPU调度的线程可以区分为用户态的线程和内核态的线程，实际运行时，CPU仍然只切换内核态的线程，协程可以通过协程调度器，让多个用户态的线程队列和一个CPU轮转期内核态的线程绑定运行也即在用户态实现并发，以达到减少线程切换时CPU资源浪费的目的。<br>协程的目的是在执行多线程任务时，减少CPU在切换线程上的调度消耗，以达到提高CPU的利用率。</p>
+<p>GPM的G是goroutine协程，P是processor处理器是抽象的处理器，包含了协程运行的环境资源，M是Machine线程，内核状态的线程。goroutine相比于广义的协程，占用更小的内存空间，只占几KB的内存（线程占用约4MB，广义协程也是MB级别），调度更加灵活</p>
+<p>G 表示 Goroutine，也就是 Go 语言中的轻量级线程。Goroutine 是一种并发执行的抽象，它比传统的线程更轻量、更高效，并且可以很容易地创建和销毁。</p>
+<p>P 表示 Processor，也可以理解为上下文处理器。每个 P 其实就是一个相当于操作系统线程的抽象，负责执行 Goroutine。P 的个数可以通过 <code>GOMAXPROCS</code> 环境变量或者 <code>runtime.GOMAXPROCS</code> 函数进行设置。</p>
+<p>M 表示 Machine，也就是操作系统线程和内核的直接映射，它负责管理真实的线程资源，并与操作系统进行交互。在 GPM 调度模型中，有多个 M，可以与多个 P 绑定。</p>
+<p>N 表示工作队列的长度。工作队列用来存放待执行的 Goroutine，当某个 P 处于空闲状态时，会从工作队列中取出 Goroutine 执行。</p>
+<p>GPM 调度模型的工作流程如下：</p>
+<ol>
+<li>当创建一个 Goroutine 时，它被放入当前 P 的本地队列（local run queue）中。</li>
+<li>当本地队列为空时，P 会尝试从全局队列（global run queue）中偷取 Goroutine。</li>
+<li>如果全局队列也为空，P 则会去其他空闲的 P 偷取 Goroutine。</li>
+<li>当 P 获取到 Goroutine 后，将其放入自己的本地队列并执行。</li>
+<li>P 执行完毕后，会检查是否需要进行垃圾回收操作。</li>
+<li>若某个 P 长时间没有进展（例如发生了系统调用或者进入了休眠状态），它会释放与之关联的 M，并允许其他 Goroutine 使用。</li>
+<li>被释放的 M 可以绑定到其他的 P，并开始执行新的 Goroutine。</li>
+</ol>
+<p>总结起来，GPM 调度模型通过将 Goroutine 分配给不同的 P 来实现并发执行，同时利用工作队列和偷取策略来平衡负载。这种调度模型在高并发、异步执行的场景下表现出色，使得开发者可以轻松地编写高效、高并发的程序。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

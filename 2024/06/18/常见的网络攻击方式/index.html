@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>网络攻击方式 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="常见的网络攻击方式
+D-Dos攻击，分布式Dos攻击，即大批量请求目标服务器暴露出来的接口，使其无法正常响应其他用户的请求；
+SQL注入；
+DNS欺骗，攻击者伪造DNS响应，将用户重定向到恶意网站；
+中间人攻击（篡改SSL证书，替换加密信息）；
+会话劫持，窃取用户会话标识符，如cookie，接管用户">
+  
+
+  
+  
+  <meta name="keywords" content="网络攻防">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="网络攻击方式"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>网络攻击方式</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/06/18/常见的网络攻击方式/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-06-18T02:47:04.000Z">
+          2024-06-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="常见的网络攻击方式"><a href="#常见的网络攻击方式" class="headerlink" title="常见的网络攻击方式"></a>常见的网络攻击方式</h2><ol>
+<li>D-Dos攻击，分布式Dos攻击，即大批量请求目标服务器暴露出来的接口，使其无法正常响应其他用户的请求；</li>
+<li>SQL注入；</li>
+<li>DNS欺骗，攻击者伪造DNS响应，将用户重定向到恶意网站；</li>
+<li>中间人攻击（篡改SSL证书，替换加密信息）；</li>
+<li>会话劫持，窃取用户会话标识符，如cookie，接管用户的会话；</li>
+<li>跨站脚本攻击（浏览器跨域校验）；</li>
+<li>端口扫描（Port Scanning）：攻击者扫描网络以查找开放的端口，以确定潜在的入侵点；</li>
+<li>缓冲区溢出攻击，输入的数据超出程序缓冲区的容量，导致程序崩溃或执行攻击者的代码；</li>
+</ol>
+<h2 id="如何预防D-Dos攻击"><a href="#如何预防D-Dos攻击" class="headerlink" title="如何预防D-Dos攻击"></a>如何预防D-Dos攻击</h2><ol>
+<li>ip限制，设置ip白名单；</li>
+<li>ip限流，限制每个ip单位时间内的请求次数；</li>
+<li>加缓存中间件，如redis，消息队列中间件等，避免短时间内大量请求直接访问到数据库；</li>
+<li>接口设计优化，接口涉及IO即访问数据库的尽量不用GET请求，入参校验cookie，或token这些；</li>
+<li>使用高防高IP服务器；</li>
+<li>分布式部署，保证可用性；</li>
+<li>加一层CDN，让CDN抗住攻击；</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/网络/">网络</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/网络攻防/">网络攻防</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
