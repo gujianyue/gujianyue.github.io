@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>记录一次context cancel报错问题 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="问题描述生产环境数据库日志有大量报错内容为context canceled的记录。
+排查步骤
+根据报错日志，定位到报错context canceled发生在集中在ORM提交事务之前的DDL方法；报错处业务场景:服务为B&amp;#x2F;S架构，数据同步页面后端服务使用golang-Goframe框架开发，">
+  
+
+  
+  
+  <meta name="keywords" content="关系数据库">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="记录一次context cancel报错问题"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>记录一次context cancel报错问题</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/18/记录一次context-cancel报错问题/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-18T08:31:15.000Z">
+          2024-12-18
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>生产环境数据库日志有大量报错内容为<code>context canceled</code>的记录。</p>
+<h2 id="排查步骤"><a href="#排查步骤" class="headerlink" title="排查步骤"></a>排查步骤</h2><ol>
+<li>根据报错日志，定位到报错<code>context canceled</code>发生在集中在ORM提交事务之前的DDL方法；<br>报错处业务场景:<br>服务为B&#x2F;S架构，数据同步页面后端服务使用golang-Goframe框架开发，数据库为PostgreSQL，服务业务逻辑为首次进入数据同步页面即执行<strong>数据同步</strong>（客户刷新页面并不会触发数据同步，只会显示历史数据），期间批量并发调用数据查询API并将返参更新到数据库中，因执行更新操作之前需要删除数据库原有数据，故整个删除更新操作开启了事务。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tx,err:=g.DB().Begin(ctx)</span><br><span class="line"><span class="keyword">if</span> err!=<span class="literal">nil</span>&#123;&#125;</span><br><span class="line">tx.DB().Model(<span class="string">&quot;table&quot;</span>).Delete(<span class="string">&quot;key = ?&quot;</span>, key)</span><br><span class="line">_, err := tx.DB().Model(<span class="string">&quot;table&quot;</span>).Data(data).Batch(<span class="number">10</span>).Insert()</span><br></pre></td></tr></table></figure></li>
+<li>回溯代码发现<code>Begin(ctx)</code>传入的<code>context</code>是请求handle使用的<code>context</code>,分别开始排查断开handle的原因<ol>
+<li>通过接口测试工具排查接口耗时是否大于接口超时限制；</li>
+<li>通过数据库最大连接数设置，观察活跃连接数排查服务是否存在连接池泄露问题；</li>
+<li>假设是用户主动刷新页面导致连接被关闭；</li>
+</ol>
+</li>
+<li>经测试，在接口返回之前模拟用户刷新操作可复现问题；</li>
+<li>将<code>Begin(ctx)</code>的入参ctx改为通过<code>Background()</code>返回的根上下文，保证程序同步动作不因请求连接断开而结束；</li>
+<li>为减少接口响应时间，还将事务拆分成多个小事务，也尝试使用乐观锁而不是用事务来执行<code>Update</code>操作；</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/工作笔记/">工作笔记</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/关系数据库/">关系数据库</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
