@@ -65,6 +65,60 @@
 
   
     
+    <h3 class="article-title"><a href="/2024/12/21/链表常见简单算法/"><span>链表常见简单算法</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/21/链表常见简单算法/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-21T12:24:56.000Z">
+          2024-12-21
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> LinkNode <span class="keyword">struct</span>&#123;</span><br><span class="line">    Val <span class="type">int</span></span><br><span class="line">    Next *LinkNode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="反转链表"><a href="#反转链表" class="headerlink" title="反转链表"></a>反转链表</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverseLinkList</span><span class="params">(head *LinkNode)</span></span>*LinkNode&#123;</span><br><span class="line">    curr:=head</span><br><span class="line">    prev:=<span class="literal">nil</span></span><br><span class="line">    <span class="keyword">for</span> curr.Next!=<span class="literal">nil</span>&#123;</span><br><span class="line">        next:=curr.Next</span><br><span class="line">        curr.Next=prev</span><br><span class="line">        prev=curr</span><br><span class="line">        curr=next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> prev</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="输出链表倒数第K个节点值"><a href="#输出链表倒数第K个节点值" class="headerlink" title="输出链表倒数第K个节点值"></a>输出链表倒数第K个节点值</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findKthFromEnd</span><span class="params">(head *LinkNode,k <span class="type">int</span>)</span></span><span class="type">int</span>&#123;</span><br><span class="line">    curr:=head</span><br><span class="line">    count:=<span class="number">0</span></span><br><span class="line">    goal:=head</span><br><span class="line">    <span class="keyword">for</span> curr.Next!=<span class="literal">nil</span>&#123;</span><br><span class="line">        curr=curr.Next</span><br><span class="line">        <span class="keyword">if</span> count&lt;k&#123;</span><br><span class="line">            count++</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            goal=goal.Next</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> count&lt;k&#123;</span><br><span class="line">        retrun <span class="literal">nil</span></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> goal.Val</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/算法/">算法</a>
+    </span>
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2024/12/19/滑动窗口算法及应用场景/"><span>滑动窗口算法及应用场景</span></a></h3>
     
   
@@ -85,7 +139,71 @@
   <div class="article-content">
     <div class="entry">
       
-        
+        <h2 id="滑动窗口基本思想"><a href="#滑动窗口基本思想" class="headerlink" title="滑动窗口基本思想"></a>滑动窗口基本思想</h2><p>滑动窗口主要应用在链表，数组等一维数据结构中，所谓窗口主要是使用双指针来实现。</p>
+<h2 id="滑动窗口算法实例"><a href="#滑动窗口算法实例" class="headerlink" title="滑动窗口算法实例"></a>滑动窗口算法实例</h2><ol>
+<li>获取链表倒数第K个节点<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getKthFromEnd</span><span class="params">(head *LinkNode)</span></span>*LinkNode&#123;</span><br><span class="line">    target:=head</span><br><span class="line">    end:=head</span><br><span class="line">    <span class="keyword">for</span> end.Next!=<span class="literal">nil</span>&amp;&amp;&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>给定一个字符串 s ，请你找出其中不含有重复字符的最长子串的长度。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(s <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    n := <span class="built_in">len</span>(s)</span><br><span class="line">    maxLength := <span class="number">0</span></span><br><span class="line">    lastIndex := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">128</span>)</span><br><span class="line">    </span><br><span class="line">    start := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> end := <span class="number">0</span>; end &lt; n; end++ &#123;</span><br><span class="line">        currentChar := s[end]</span><br><span class="line">        <span class="keyword">if</span> lastIndex[currentChar] &gt; start &#123;</span><br><span class="line">            start = lastIndex[currentChar]</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> end-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">            maxLength = end - start + <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        lastIndex[currentChar] = end + <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>leetcode [209] 长度最小的子数组<br>给定一个含有 n 个正整数的数组和一个正整数 target 。<br>找出该数组中满足其总和大于等于 target 的长度最小的 子数组 [numsl, numsl+1, …, numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	minLen := <span class="built_in">len</span>(nums)+<span class="number">1</span> </span><br><span class="line">	left := <span class="number">0</span>                    <span class="comment">// 窗口的左边界</span></span><br><span class="line">	currentSum := <span class="number">0</span>              <span class="comment">// 当前窗口的和</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> right := <span class="number">0</span>; right &lt; <span class="built_in">len</span>(nums); right++ &#123;</span><br><span class="line">		currentSum += nums[right] <span class="comment">// 将右边界的元素加入到当前窗口的和中</span></span><br><span class="line">		<span class="comment">// 当当前窗口的和大于等于 target 时，尝试缩小窗口</span></span><br><span class="line">		<span class="keyword">for</span> currentSum &gt;= target &#123;</span><br><span class="line">			minLen = min(minLen, right-left+<span class="number">1</span>) <span class="comment">// 更新最小长度</span></span><br><span class="line">			currentSum -= nums[left]           <span class="comment">// 从窗口的左边界减去元素</span></span><br><span class="line">			left++                             <span class="comment">// 移动左边界</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 如果没有找到符合条件的子数组，返回0</span></span><br><span class="line">	<span class="keyword">if</span> minLen == <span class="built_in">len</span>(nums)+<span class="number">1</span>  &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> minLen</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="滑动窗口应用场景"><a href="#滑动窗口应用场景" class="headerlink" title="滑动窗口应用场景"></a>滑动窗口应用场景</h2><p>滑动窗口算法是一种非常实用的算法技术，它在处理数组或字符串等序列数据时特别有用。以下是一些滑动窗口算法的应用场景：</p>
+<ol>
+<li><p><strong>寻找子数组&#x2F;子串的最小&#x2F;最大和</strong>：</p>
+<ul>
+<li>给定一个数组和一个整数k，找出所有长度为k的子数组的最大和或最小和。</li>
+<li>给定一个数组和一个目标和，找出具有最大和的连续子数组。</li>
+</ul>
+</li>
+<li><p><strong>寻找满足条件的子数组</strong>：</p>
+<ul>
+<li>如前所述，寻找满足总和大于等于某个特定值的最小长度子数组。</li>
+<li>寻找数组中所有等于目标和的子数组。</li>
+</ul>
+</li>
+<li><p><strong>字符串处理</strong>：</p>
+<ul>
+<li>找出字符串中不包含重复字符的最长子串。</li>
+<li>找出字符串中满足特定条件的最短子串，例如包含所有特定字符的最短子串。</li>
+</ul>
+</li>
+<li><p><strong>数据流问题</strong>：</p>
+<ul>
+<li>在处理数据流时，滑动窗口可以用来维护一个固定大小的数据窗口，以便于实时计算窗口内数据的统计信息。</li>
+</ul>
+</li>
+<li><p><strong>时间序列分析</strong>：</p>
+<ul>
+<li>在金融领域，滑动窗口可以用来分析特定时间段内的股票价格变动。</li>
+</ul>
+</li>
+<li><p><strong>滑动窗口协议</strong>：</p>
+<ul>
+<li>在计算机网络中，滑动窗口协议用于控制数据传输，确保接收方不会因为数据量过大而处理不过来。</li>
+</ul>
+</li>
+<li><p><strong>图像处理</strong>：</p>
+<ul>
+<li>在图像处理中，滑动窗口可以用来识别图像中的特定模式或特征。</li>
+</ul>
+</li>
+<li><p><strong>机器学习特征提取</strong>：</p>
+<ul>
+<li>在机器学习中，滑动窗口可以用来从时间序列数据中提取特征。</li>
+</ul>
+</li>
+<li><p><strong>游戏开发</strong>：</p>
+<ul>
+<li>在游戏开发中，滑动窗口可以用来检测玩家在一定时间内的行为模式。</li>
+</ul>
+</li>
+<li><p><strong>实时监控系统</strong>：</p>
+<ul>
+<li>在实时监控系统中，滑动窗口可以用来检测异常行为，例如在短时间内的频繁登录尝试。</li>
+</ul>
+</li>
+</ol>
+<p>滑动窗口算法因其简单和高效而在这些场景中被广泛使用。通过维护一个动态的窗口，算法可以在不遍历整个数据集的情况下，快速找到满足特定条件的数据子集。</p>
+
       
     </div>
 
@@ -94,6 +212,13 @@
   <div class="article-footer">
     <div class="article-meta pull-left">
 
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/算法/">算法</a>
+    </span>
     
 
     
@@ -759,80 +884,6 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/golang/">golang</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2023/07/01/尝试用python实现贪吃蛇/"><span>尝试用python实现贪吃蛇</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2023/07/01/尝试用python实现贪吃蛇/" rel="bookmark">
-        <time class="entry-date published" datetime="2023-07-01T01:07:18.000Z">
-          2023-07-01
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="/../assets/pythonSnake%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="流程图"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: KEYDOWN.K_ENTER</span><br><span class="line">op0=&gt;operation: 食物刷新</span><br><span class="line">op1=&gt;operation: 控制行进方向</span><br><span class="line">cond1=&gt;condition: 吃到食物?</span><br><span class="line">cond2=&gt;condition: 触碰到边界或身体?</span><br><span class="line">e=&gt;end: Game Over</span><br><span class="line"></span><br><span class="line">st-&gt;op0-&gt;op1-&gt;cond1-&gt;cond2</span><br><span class="line">cond1(yes)-&gt;op0</span><br><span class="line">cond1(no)-&gt;cond2</span><br><span class="line">cond2(yes)-&gt;e</span><br><span class="line">cond2(no)-&gt;op1</span><br></pre></td></tr></table></figure>
-
-<h3 id="场景元素图"><a href="#场景元素图" class="headerlink" title="场景元素图"></a>场景元素图</h3><p><img src="/../assets/%E5%9C%BA%E6%99%AF%E5%85%83%E7%B4%A0%E5%9B%BE-%E8%B4%AA%E5%90%83%E8%9B%87.png" alt="场景元素图-贪吃蛇"></p>
-<h3 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h3><p>方向调整</p>
-<h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><p>刷新食物位置</p>
-<p>吃到食物</p>
-<p>触碰到边界</p>
-<h3 id="数据结构设计"><a href="#数据结构设计" class="headerlink" title="数据结构设计"></a>数据结构设计</h3><p>二维画布</p>
-<p>一维蛇</p>
-<p>点食物</p>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># author：Wangdali time:2021年1月20日16:08:44</span></span><br><span class="line"><span class="comment">#python实现：贪吃蛇</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">游戏玩法：回车开始游戏；空格暂停游戏/继续游戏；方向键/wsad控制小蛇走向</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">思路：用列表存储蛇的身体；用浅色表示身体，深色背景将身体凸显出来；</span></span><br><span class="line"><span class="string">蛇的移动：仔细观察，是：身体除头和尾不动、尾部消失，头部增加，所以，新添加的元素放在列表头部、删除尾部元素；</span></span><br><span class="line"><span class="string">游戏结束判定策略：超出边界；触碰到自己的身体：蛇前进的下一格子为身体的一部分（即在列表中）。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#注：因为在列表中需要频繁添加和删除元素，所以用deque容器代替列表；是因为deque具有高效的插入和删除效率</span></span><br><span class="line"><span class="comment">#初始化蛇，长度为3，放置在屏幕左上角；</span></span><br><span class="line"><span class="comment">#导包</span></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> pygame</span><br><span class="line"><span class="keyword">from</span> pygame.<span class="built_in">locals</span> <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="comment">#基础设置</span></span><br><span class="line">Screen_Height=<span class="number">720</span></span><br><span class="line">Screen_Width=<span class="number">1280</span></span><br><span class="line">Size=<span class="number">20</span><span class="comment">#小方格大小</span></span><br><span class="line">Line_Width=<span class="number">1</span></span><br><span class="line"><span class="comment">#游戏区域的坐标范围</span></span><br><span class="line">Area_x=(<span class="number">0</span>,Screen_Width//Size-<span class="number">1</span>) <span class="comment">#0是左边界，1是右边界 #注：python中//为整数除法；/为浮点数除法</span></span><br><span class="line">Area_y=(<span class="number">2</span>,Screen_Height//Size-<span class="number">1</span>)</span><br><span class="line"><span class="comment">#食物的初步设置</span></span><br><span class="line"><span class="comment">#食物的分值+颜色</span></span><br><span class="line">Food_Style_List=[(<span class="number">10</span>,(<span class="number">255</span>,<span class="number">100</span>,<span class="number">100</span>)),(<span class="number">20</span>,(<span class="number">100</span>,<span class="number">255</span>,<span class="number">100</span>)),(<span class="number">30</span>,(<span class="number">100</span>,<span class="number">100</span>,<span class="number">255</span>))]</span><br><span class="line"><span class="comment">#整体颜色设置</span></span><br><span class="line">Light=(<span class="number">100</span>,<span class="number">100</span>,<span class="number">100</span>)</span><br><span class="line">Dark=(<span class="number">200</span>,<span class="number">200</span>,<span class="number">200</span>)</span><br><span class="line">Black=(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">Red=(<span class="number">200</span>,<span class="number">30</span>,<span class="number">30</span>)</span><br><span class="line">Back_Ground=(<span class="number">40</span>,<span class="number">40</span>,<span class="number">60</span>)</span><br><span class="line"><span class="comment">#文本输出格式设置</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Print_Txt</span>(<span class="params">screen,font,x,y,text,fcolor=(<span class="params"><span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span></span>)</span>):</span><br><span class="line">    <span class="comment">#font.render参数意义：.render（内容，是否抗锯齿，字体颜色，字体背景颜色）</span></span><br><span class="line">    Text=font.render(text,<span class="literal">True</span>,fcolor)</span><br><span class="line">    screen.blit(Text,(x,y))</span><br><span class="line"><span class="comment">#初始化蛇</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">init_snake</span>():</span><br><span class="line">    snake=deque()</span><br><span class="line">    snake.append((<span class="number">2</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    snake.append((<span class="number">1</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    snake.append((<span class="number">0</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    <span class="keyword">return</span> snake</span><br><span class="line"><span class="comment">#食物设置</span></span><br><span class="line"><span class="comment">#注意需要对食物出现在蛇身上的情况进行判断</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Creat_Food</span>(<span class="params">snake</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    注：randint 产生的随机数区间是包含左右极限的，</span></span><br><span class="line"><span class="string">    也就是说左右都是闭区间的[1, n]，能取到1和n。</span></span><br><span class="line"><span class="string">    而 randrange 产生的随机数区间只包含左极限，</span></span><br><span class="line"><span class="string">    也就是左闭右开的[1, n)，1能取到，而n取不到。randint</span></span><br><span class="line"><span class="string">    产生的随机数是在指定的某个区间内的一个值，</span></span><br><span class="line"><span class="string">    而 randrange 产生的随机数可以设定一个步长，也就是一个间隔。</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    food_x=random.randint(Area_x[<span class="number">0</span>],Area_x[<span class="number">1</span>]) <span class="comment">#此处有疑问</span></span><br><span class="line">    food_y=random.randint(Area_y[<span class="number">0</span>],Area_y[<span class="number">1</span>])</span><br><span class="line">    <span class="comment">#如果食物出现在蛇上，重来；</span></span><br><span class="line">    <span class="keyword">while</span>(food_x,food_y)<span class="keyword">in</span> snake:</span><br><span class="line">        food_x = random.randint(Area_x[<span class="number">0</span>], Area_x[<span class="number">1</span>])</span><br><span class="line">        food_y = random.randint(Area_y[[<span class="number">0</span>], Area_y[<span class="number">1</span>]])</span><br><span class="line">    <span class="keyword">return</span> food_x,food_y</span><br><span class="line"><span class="comment">#食物风格</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Food_Style</span>():</span><br><span class="line">    <span class="keyword">return</span> Food_Style_List[random.randint(<span class="number">0</span>,<span class="number">2</span>)] <span class="comment">#返回随机的分值和颜色</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    pygame.init()</span><br><span class="line">    screen=pygame.display.set_mode((Screen_Width,Screen_Height)) <span class="comment">#初始化一个准备显示的窗口或屏幕</span></span><br><span class="line">    pygame.display.set_caption(<span class="string">&#x27;贪吃蛇&#x27;</span>) <span class="comment">#Set the current window caption</span></span><br><span class="line">    <span class="comment">#得分字体设置</span></span><br><span class="line">    font1=pygame.font.SysFont(<span class="string">&#x27;SimHei&#x27;</span>,<span class="number">24</span>)</span><br><span class="line">    <span class="comment">#GO字体设置</span></span><br><span class="line">    font2 = pygame.font.SysFont(<span class="literal">None</span>, <span class="number">72</span>)</span><br><span class="line">    fwidth, fheight = font2.size(<span class="string">&#x27;GAME OVER&#x27;</span>) <span class="comment">###</span></span><br><span class="line">    <span class="comment">#程序bug修复：如果蛇在向右移动，快速点击分别施加向下、向左的命令，向下的命令会被覆盖，只有向左的命令被接受，直接GameOver</span></span><br><span class="line">    <span class="comment"># b变量为了防止这个情况发生</span></span><br><span class="line">    b=<span class="literal">True</span></span><br><span class="line">    <span class="comment">#蛇</span></span><br><span class="line">    snake=init_snake()</span><br><span class="line">    <span class="comment">#食物</span></span><br><span class="line">    food=Creat_Food(snake)</span><br><span class="line">    food_style=Food_Style()</span><br><span class="line">    <span class="comment">#方向控制</span></span><br><span class="line">    pos=(<span class="number">1</span>,<span class="number">0</span>) <span class="comment">###</span></span><br><span class="line">    <span class="comment">#启动游戏相关变量初始化</span></span><br><span class="line">    game_over=<span class="literal">True</span>  <span class="comment">#结束标志 # 是否开始，当start = True，game_over = True 时，才显示 GAME OVER</span></span><br><span class="line">    game_start=<span class="literal">False</span>    <span class="comment">#开始标志</span></span><br><span class="line">    score=<span class="number">0</span> <span class="comment">#得分</span></span><br><span class="line">    orispeed=<span class="number">0.3</span>  <span class="comment">#蛇初始速度</span></span><br><span class="line">    speed=orispeed  <span class="comment">#蛇速度</span></span><br><span class="line">    last_move_time=<span class="literal">None</span></span><br><span class="line">    pause=<span class="literal">False</span> <span class="comment">#暂停</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">for</span> event <span class="keyword">in</span> pygame.event.get():</span><br><span class="line">            <span class="keyword">if</span> event.<span class="built_in">type</span>==QUIT:</span><br><span class="line">                sys.exit()</span><br><span class="line">            <span class="keyword">elif</span> event.<span class="built_in">type</span>==KEYDOWN:</span><br><span class="line">                <span class="keyword">if</span> event.key==K_RETURN:</span><br><span class="line">                    <span class="keyword">if</span> game_over:</span><br><span class="line">                        game_start=<span class="literal">True</span></span><br><span class="line">                        game_over=<span class="literal">False</span></span><br><span class="line">                        b=<span class="literal">True</span></span><br><span class="line">                        snake=init_snake()</span><br><span class="line">                        food=Creat_Food(snake)</span><br><span class="line">                        food_style=Food_Style()</span><br><span class="line">                        pos=(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">                        <span class="comment">#得分</span></span><br><span class="line">                        score=<span class="number">0</span></span><br><span class="line">                        last_move_time=time.time()</span><br><span class="line">                <span class="keyword">elif</span> event.key==K_SPACE:</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">                        pause=<span class="keyword">not</span> pause</span><br><span class="line">                <span class="comment">#以下为防止蛇在向右移动时按向左键，导致GameOver</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_UP,K_w):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">1</span>]: <span class="comment">###</span></span><br><span class="line">                        pos=(<span class="number">0</span>,-<span class="number">1</span>)</span><br><span class="line">                        b=<span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_DOWN,K_s):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">1</span>]:</span><br><span class="line">                        pos = (<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_LEFT,K_a):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">0</span>]:</span><br><span class="line">                        pos = (-<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_RIGHT,K_d):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">0</span>]:</span><br><span class="line">                        pos = (<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">        <span class="comment">#填充背景色</span></span><br><span class="line">        screen.fill(Back_Ground)</span><br><span class="line">        <span class="comment">###</span></span><br><span class="line">        <span class="comment">#画网格线、竖线</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(Size, Screen_Width, Size):</span><br><span class="line">            pygame.draw.line(screen, Black, (x, Area_y[<span class="number">0</span>] * Size), (x, Screen_Height), Line_Width)</span><br><span class="line">        <span class="comment">#画网格线、横线</span></span><br><span class="line">        <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(Area_y[<span class="number">0</span>] * Size, Screen_Height, Size):</span><br><span class="line">            pygame.draw.line(screen, Black, (<span class="number">0</span>, y), (Screen_Width, y), Line_Width)</span><br><span class="line">        <span class="comment">#蛇的爬行过程</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">            curTime=time.time()</span><br><span class="line">            <span class="keyword">if</span> curTime-last_move_time&gt;speed: <span class="comment">###</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> pause:</span><br><span class="line">                    b=<span class="literal">True</span></span><br><span class="line">                    last_move_time=curTime</span><br><span class="line">                    next_s = (snake[<span class="number">0</span>][<span class="number">0</span>] + pos[<span class="number">0</span>], snake[<span class="number">0</span>][<span class="number">1</span>] + pos[<span class="number">1</span>])</span><br><span class="line">                    <span class="comment">#如果吃到了食物</span></span><br><span class="line">                    <span class="keyword">if</span> next_s==food:</span><br><span class="line">                        snake.appendleft(next_s)</span><br><span class="line">                        score+=food_style[<span class="number">0</span>]</span><br><span class="line">                        speed = orispeed - <span class="number">0.03</span> * (score // <span class="number">100</span>)</span><br><span class="line">                        food = Creat_Food(snake)</span><br><span class="line">                        food_style = Food_Style()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="comment">#在区域内</span></span><br><span class="line">                        <span class="keyword">if</span> Area_x[<span class="number">0</span>]&lt;=next_s[<span class="number">0</span>]&lt;=Area_x[<span class="number">1</span>] <span class="keyword">and</span> Area_y[<span class="number">0</span>]&lt;=next_s[<span class="number">1</span>]&lt;=Area_y[<span class="number">1</span>] <span class="keyword">and</span> next_s <span class="keyword">not</span> <span class="keyword">in</span> snake:</span><br><span class="line">                            snake.appendleft(next_s)</span><br><span class="line">                            snake.pop()</span><br><span class="line">                        <span class="keyword">else</span> :</span><br><span class="line">                            game_over=<span class="literal">True</span></span><br><span class="line">        <span class="comment">#画食物</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">         <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        rect(Surface,color,Rect,width=0)</span></span><br><span class="line"><span class="string">第一个参数指定矩形绘制到哪个Surface对象上</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第二个参数指定颜色</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第三个参数指定矩形的范围（left，top，width，height）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第四个参数指定矩形边框的大小（0表示填充矩形）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">例如绘制三个矩形：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (50, 50, 150, 50), 0)</span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (250, 50, 150, 50), 1)</span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (450, 50, 150, 50), 10)</span></span><br><span class="line"><span class="string">         &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment"># 避免 GAME OVER 的时候把 GAME OVER 的字给遮住了</span></span><br><span class="line">        pygame.draw.rect(screen, food_style[<span class="number">1</span>], (food[<span class="number">0</span>] * Size, food[<span class="number">1</span>] * Size, Size, Size), <span class="number">0</span>)</span><br><span class="line">        <span class="comment">#画蛇</span></span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> snake:</span><br><span class="line">            pygame.draw.rect(screen, Dark, (s[<span class="number">0</span>] * Size + Line_Width, s[<span class="number">1</span>] * Size + Line_Width,</span><br><span class="line">                                            Size - Line_Width * <span class="number">2</span>, Size - Line_Width * <span class="number">2</span>), <span class="number">0</span>)</span><br><span class="line">        Print_Txt(screen, font1, <span class="number">30</span>, <span class="number">7</span>, <span class="string">f&#x27;速度: <span class="subst">&#123;score // <span class="number">100</span>&#125;</span>&#x27;</span>)</span><br><span class="line">        Print_Txt(screen, font1, <span class="number">450</span>, <span class="number">7</span>, <span class="string">f&#x27;得分: <span class="subst">&#123;score&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="comment">#画GameOver</span></span><br><span class="line">        <span class="keyword">if</span> game_over:</span><br><span class="line">            <span class="keyword">if</span> game_start:</span><br><span class="line">                <span class="comment">#print(&#x27;GameOver&#x27;)</span></span><br><span class="line">                Print_Txt(screen, font2, (Screen_Width - fwidth) // <span class="number">2</span>, (Screen_Height - fheight) // <span class="number">2</span>, <span class="string">&#x27;GAME OVER&#x27;</span>,Red)</span><br><span class="line">        pygame.display.update()</span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-
-
-
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/自娱自乐/">自娱自乐</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/python/">python</a><a href="/tags/pygame/">pygame</a>
     </span>
     
 
