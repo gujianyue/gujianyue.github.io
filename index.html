@@ -65,52 +65,7 @@
 
   
     
-    <h3 class="article-title"><a href="/2024/12/24/记录搭建AI中转站的过程/"><span>记录搭建AI中转站的过程</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2024/12/24/记录搭建AI中转站的过程/" rel="bookmark">
-        <time class="entry-date published" datetime="2024-12-24T14:17:04.000Z">
-          2024-12-24
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/2024/12/24/如何利用GPU提高程序运算速度/"><span>如何利用GPU提高程序运算速度</span></a></h3>
+    <h3 class="article-title"><a href="/2024/12/24/如何利用GPU提高程序运算速度/"><span>GPU工作原理</span></a></h3>
     
   
 
@@ -130,7 +85,62 @@
   <div class="article-content">
     <div class="entry">
       
-        <h2 id="GPU工作模式和CPU的区别"><a href="#GPU工作模式和CPU的区别" class="headerlink" title="GPU工作模式和CPU的区别"></a>GPU工作模式和CPU的区别</h2><h2 id="适合GPU计算的场景"><a href="#适合GPU计算的场景" class="headerlink" title="适合GPU计算的场景"></a>适合GPU计算的场景</h2><h2 id="深度学习详细过程"><a href="#深度学习详细过程" class="headerlink" title="深度学习详细过程"></a>深度学习详细过程</h2><h2 id="CUDA算法可以做的事情"><a href="#CUDA算法可以做的事情" class="headerlink" title="CUDA算法可以做的事情"></a>CUDA算法可以做的事情</h2><h2 id="卷积神经网络CNN能做的事情"><a href="#卷积神经网络CNN能做的事情" class="headerlink" title="卷积神经网络CNN能做的事情"></a>卷积神经网络CNN能做的事情</h2><h2 id=""><a href="#" class="headerlink" title=""></a></h2>
+        <h2 id="GPU和CPU的区别"><a href="#GPU和CPU的区别" class="headerlink" title="GPU和CPU的区别"></a>GPU和CPU的区别</h2><p><strong>CPU架构设计</strong><br><img src="/../assets/cpu_arch.png" alt="CPU"><br><strong>CPU核心参数</strong><br><img src="/../assets/amd_cpu_bench.png" alt="CPU"><br><strong>GPU架构设计</strong><br><img src="/../assets/gpu_arch.png" alt="GPU"><br><strong>GPU核心参数</strong><br><img src="/../assets/gpu_bench.png" alt="GPU"><br>在CPU的架构中包含多级缓存，各种复杂操作指令集，CPU的架构设计是为了支持复杂的逻辑运算，每个核心都是完整通用的处理器单元，且其工作模式实际上是串行执行任务的，GPU的架构从设计之初就是专门用于处理图像和视频等图形数据,具有大量的流处理器和着色器，且其工作模式是并行执行任务的,从规格也可以看出除了核心数外同期的GPU比CPU有更高的时钟频率和内存带宽。<br>总结下来GPU和CPU的主要区别在以下几点：</p>
+<ol>
+<li>并行计算能力:<br>GPU：GPU设计为大规模的并行计算，具有数千个小型处理核心，这些核心能够同时执行大量的计算任务。深度学习中的许多计算（如矩阵乘法、卷积运算等）都可以高度并行化。GPU能够同时处理多个数据流（例如，多个神经元的计算），从而大大提高了训练效率。<br>CPU：CPU一般只有少数几个（通常为4到16个）强大的核心，适合处理顺序执行的任务。CPU适合执行需要复杂决策和高频任务的应用，但在深度学习中的大规模矩阵计算、卷积等任务上，其并行能力远逊色于GPU。</li>
+<li>内存带宽:<br>GPU：GPU通常配备更宽的内存带宽，允许其快速访问和处理大规模的数据集。例如，现代GPU如NVIDIA的A100、V100、H100等，具有高达1TB&#x2F;s的内存带宽。这使得GPU在处理大规模数据集时能够更快地读取和写入数据，从而提高了训练速度。<br>CPU：虽然CPU的内存带宽也在不断提高，但通常远低于GPU。CPU的内存带宽有限，这使得它在处理深度学习中的大规模数据时，可能成为瓶颈，尤其是对于需要大量数据交换的神经网络模型（如大规模图像、视频处理等）。</li>
+</ol>
+<h2 id="适合GPU计算的场景"><a href="#适合GPU计算的场景" class="headerlink" title="适合GPU计算的场景"></a>适合GPU计算的场景</h2><ol>
+<li>图形渲染和计算机视觉<br>图形渲染：GPU最初的设计目的是加速图形渲染，特别是3D图形。GPU在计算机图形学中通过执行大量并行的图形计算（如光照、阴影、纹理映射等）来加速渲染过程。<br>应用：视频游戏、虚拟现实（VR）、增强现实（AR）、3D建模和动画制作。<br>计算机视觉：GPU可以加速图像处理、目标检测、图像分割、面部识别、自动驾驶汽车中的视觉系统等任务。<br>应用：安防监控、医学影像分析、自动驾驶、工业视觉检测。</li>
+<li>大规模矩阵计算<br>GPU：深度学习中的核心任务（如反向传播中的梯度计算和前向传播中的矩阵乘法）是矩阵计算密集型的。GPU特别适合这类任务，因为它能通过并行计算同时处理矩阵中的多个元素。NVIDIA的GPU通过CUDA等库进一步优化了这些运算，使得在训练深度学习模型时，GPU能够极大提升计算效率。<br>CPU：虽然CPU也能进行矩阵计算，但由于缺乏大规模的并行处理能力，CPU在执行大规模矩阵计算时远远不如GPU高效。</li>
+<li>自然语言处理（NLP）<br>加速NLP任务：GPU在处理大规模文本数据、训练和推理自然语言处理模型（如Transformer、BERT、GPT等）时表现出色。NLP模型通常需要大量的计算资源来处理文本序列，GPU能够显著加速这些计算。<br>应用：机器翻译、语音识别、聊天机器人、情感分析、文本生成。</li>
+<li>医学影像处理<br>CT、MRI图像处理：医学影像处理中常常需要进行大规模的数据分析和图像处理，GPU能够加速图像重建、分割、识别等任务。<br>自动诊断：Nvidia的GPU通过CUDA可以加速基于深度学习的自动化诊断系统，如利用卷积神经网络（CNN）进行肿瘤检测、器官分割等任务。</li>
+</ol>
+<h2 id="深度学习和神经网络"><a href="#深度学习和神经网络" class="headerlink" title="深度学习和神经网络"></a>深度学习和神经网络</h2><p><strong>深度学习</strong>和<strong>神经网络</strong>是紧密相关的概念，但它们并不完全相同。以下是它们之间的关系及区别：</p>
+<h3 id="1-神经网络（Neural-Networks）"><a href="#1-神经网络（Neural-Networks）" class="headerlink" title="1. 神经网络（Neural Networks）"></a>1. <strong>神经网络（Neural Networks）</strong></h3><p>神经网络是模仿生物神经系统的计算模型，尤其是大脑神经元之间的连接结构。在人工智能领域，神经网络被用来进行数据处理和模式识别。</p>
+<h4 id="基本概念："><a href="#基本概念：" class="headerlink" title="基本概念："></a>基本概念：</h4><ul>
+<li><strong>神经网络（Neural Network）</strong>：由一组互相连接的节点（即神经元）组成，这些神经元通过权重相连。神经网络可以进行监督学习和非监督学习，用于完成分类、回归等任务。</li>
+<li><strong>层次结构</strong>：神经网络通常包含输入层、隐藏层和输出层。每一层包含若干神经元（节点），每个神经元接受前一层的输出，并通过激活函数处理后传递给下一层。</li>
+<li><strong>激活函数</strong>：通常使用如ReLU、Sigmoid、Tanh等激活函数来增加网络的非线性能力。</li>
+</ul>
+<h4 id="传统神经网络（浅层神经网络）："><a href="#传统神经网络（浅层神经网络）：" class="headerlink" title="传统神经网络（浅层神经网络）："></a>传统神经网络（浅层神经网络）：</h4><ul>
+<li>神经网络最初并不深，通常只有一层或两层隐藏层（即浅层神经网络）。这些浅层网络对于一些简单的任务（如线性可分问题）效果良好。</li>
+<li><strong>不足</strong>：浅层神经网络无法有效地处理复杂、高维的数据和任务（如图像识别、自然语言处理等），并且存在梯度消失和梯度爆炸的问题。</li>
+</ul>
+<h3 id="2-深度学习"><a href="#2-深度学习" class="headerlink" title="2. 深度学习"></a>2. <strong>深度学习</strong></h3><p>深度学习是神经网络的一种拓展，它指的是具有多个隐藏层（即深层结构）的神经网络模型。深度学习的“深度”通常指的是网络中有多个隐藏层，而这些层次使得模型能够自动学习和提取数据的高级特征。</p>
+<h4 id="基本概念：-1"><a href="#基本概念：-1" class="headerlink" title="基本概念："></a>基本概念：</h4><ul>
+<li><strong>深度神经网络</strong>：深度学习中的神经网络通常包含很多隐藏层，这些层使得模型能够逐步提取数据的高层次特征。</li>
+<li><strong>多层学习</strong>：每一层可以从前一层的输出中学习到更复杂的特征。比如，在图像识别中，浅层可以学习边缘和简单形状，中间层可以学习纹理和局部结构，深层可以学习复杂的对象或场景。</li>
+<li><strong>反向传播算法</strong>：深度学习模型通常使用反向传播（backpropagation）和梯度下降等优化方法来训练网络，使得模型能够逐渐减少损失函数的值，找到最佳的权重参数。</li>
+</ul>
+<h4 id="主要特点："><a href="#主要特点：" class="headerlink" title="主要特点："></a>主要特点：</h4><ul>
+<li><strong>深度结构</strong>：深度学习网络有多个隐藏层，通常包含上百或上千个神经元。</li>
+<li><strong>自我特征提取</strong>：深度学习能够自动从原始数据中提取特征，而无需人工手动设计特征。这使得深度学习在处理复杂任务（如语音识别、自然语言处理、图像识别等）时表现优越。</li>
+<li><strong>大数据和计算资源</strong>：深度学习通常需要大量的训练数据和强大的计算能力（如GPU）来训练深度神经网络。</li>
+</ul>
+<h3 id="3-深度学习和神经网络的关系"><a href="#3-深度学习和神经网络的关系" class="headerlink" title="3. 深度学习和神经网络的关系"></a>3. <strong>深度学习和神经网络的关系</strong></h3><ul>
+<li><strong>深度学习是神经网络的一个子集</strong>：深度学习本质上是通过深层神经网络（DNN）来解决更复杂的任务。它是神经网络的一种扩展或进阶版本，强调使用深度（多层）的结构来提取数据中的高级特征。</li>
+<li><strong>神经网络可以是浅层的</strong>：而深度学习网络通常都是深层的神经网络。浅层神经网络和深度学习之间的主要区别在于网络的深度（即隐藏层的数量）。</li>
+<li><strong>深度学习模型的优势</strong>：深度学习能够从大量的复杂数据中学习到有用的表示（特征），并且在很多任务上超越了传统的浅层神经网络，尤其是在图像、语音、文本等领域。</li>
+</ul>
+<h3 id="4-神经网络的种类与深度学习的相关性"><a href="#4-神经网络的种类与深度学习的相关性" class="headerlink" title="4. 神经网络的种类与深度学习的相关性"></a>4. <strong>神经网络的种类与深度学习的相关性</strong></h3><p>深度学习使用的神经网络架构通常比传统的神经网络更加复杂和深层。常见的深度学习网络架构包括：</p>
+<ul>
+<li><strong>卷积神经网络（CNN）</strong>：专门用于处理图像数据，通过卷积层提取图像中的局部特征，广泛应用于图像分类、目标检测等任务。</li>
+<li><strong>循环神经网络（RNN）</strong>：适用于处理序列数据，能够处理时间依赖性较强的问题，如语音识别、语言建模等。</li>
+<li><strong>长短时记忆网络（LSTM）</strong>：RNN的一种变种，能够更好地捕捉长时间序列中的依赖关系。</li>
+<li><strong>变换器网络（Transformer）</strong>：主要用于自然语言处理（NLP）任务，特别是语言模型（如BERT、GPT）。它基于自注意力机制，可以并行化训练并处理长序列数据。</li>
+</ul>
+<h3 id="5-深度学习的核心优势"><a href="#5-深度学习的核心优势" class="headerlink" title="5. 深度学习的核心优势"></a>5. <strong>深度学习的核心优势</strong></h3><ul>
+<li><strong>自动特征学习</strong>：深度学习能够自动从原始数据中学习出特征，而不需要手动设计特征。这对于复杂的任务（如图像分类、语音识别等）非常有利。</li>
+<li><strong>高维数据处理</strong>：深度神经网络能有效处理高维、复杂的数据，如图像、音频和文本等。</li>
+<li><strong>性能提升</strong>：随着数据量和计算能力的增加，深度学习在许多任务上都表现出了比传统机器学习方法更优的性能。</li>
+</ul>
+<h3 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. <strong>总结</strong></h3><ul>
+<li><strong>神经网络</strong>是深度学习的基础，指的是由多个神经元连接组成的计算模型。传统神经网络通常是“浅层”的，只有少量的隐藏层。</li>
+<li><strong>深度学习</strong>是利用深层神经网络（即具有多个隐藏层的神经网络）来自动学习数据的高级特征。深度学习通过多个层次的非线性映射，将复杂的输入数据转化为有用的表示，在许多任务中取得了突破性进展。</li>
+</ul>
+<p>简而言之，深度学习是基于神经网络的一种进阶应用，它通过深层次结构和大规模数据的处理，解决了更复杂、更抽象的问题。</p>
+
       
     </div>
 
@@ -229,13 +239,13 @@
   <div class="article-content">
     <div class="entry">
       
-        <h2 id="滑动窗口基本思想"><a href="#滑动窗口基本思想" class="headerlink" title="滑动窗口基本思想"></a>滑动窗口基本思想</h2><p>滑动窗口主要应用在链表，数组等一维数据结构中，所谓窗口主要是使用双指针来实现。</p>
+        <h2 id="滑动窗口基本思想"><a href="#滑动窗口基本思想" class="headerlink" title="滑动窗口基本思想"></a>滑动窗口基本思想</h2><p>滑动窗口主要应用在链表，数组等一维数据结构中，所谓窗口在算法中实际使用双指针来实现，主要要确定滑动指针的边界。</p>
 <h2 id="滑动窗口算法实例"><a href="#滑动窗口算法实例" class="headerlink" title="滑动窗口算法实例"></a>滑动窗口算法实例</h2><ol>
 <li>获取链表倒数第K个节点<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getKthFromEnd</span><span class="params">(head *LinkNode,k <span class="type">int</span>)</span></span>*LinkNode&#123;</span><br><span class="line">   slow:=head</span><br><span class="line">   fast:=head</span><br><span class="line">   <span class="keyword">for</span> i:=<span class="number">0</span>;i&lt;k&amp;&amp;fast!=<span class="literal">nil</span>;i++&#123;</span><br><span class="line">     fast = fast.Next</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> fast==<span class="literal">nil</span>&#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">for</span> fast!=<span class="literal">nil</span>&#123;</span><br><span class="line">      slow = slow.Next</span><br><span class="line">      fast.Next = fast.Next</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> slow </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li>给定一个字符串 s ，请你找出其中不含有重复字符的最长子串的长度。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(s <span class="type">string</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    n := <span class="built_in">len</span>(s)</span><br><span class="line">    maxLength := <span class="number">0</span></span><br><span class="line">    lastIndex := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">128</span>)</span><br><span class="line">    </span><br><span class="line">    start := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> fast := <span class="number">0</span>; fast &lt; n; fast++ &#123;</span><br><span class="line">        currentChar := s[fast]</span><br><span class="line">        <span class="keyword">if</span> lastIndex[currentChar] &gt; start &#123;</span><br><span class="line">            start = lastIndex[currentChar]</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> fast-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">            maxLength = fast - start + <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        lastIndex[currentChar] = fast + <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li>leetcode [209] 长度最小的子数组<br>给定一个含有 n 个正整数的数组和一个正整数 slow 。<br>找出该数组中满足其总和大于等于 slow 的长度最小的 子数组 [numsl, numsl+1, …, numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(slow <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	minLen := <span class="built_in">len</span>(nums)+<span class="number">1</span> </span><br><span class="line">	left := <span class="number">0</span>                    <span class="comment">// 窗口的左边界</span></span><br><span class="line">	currentSum := <span class="number">0</span>              <span class="comment">// 当前窗口的和</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> right := <span class="number">0</span>; right &lt; <span class="built_in">len</span>(nums); right++ &#123;</span><br><span class="line">		currentSum += nums[right] <span class="comment">// 将右边界的元素加入到当前窗口的和中</span></span><br><span class="line">		<span class="comment">// 当当前窗口的和大于等于 slow 时，尝试缩小窗口</span></span><br><span class="line">		<span class="keyword">for</span> currentSum &gt;= slow &#123;</span><br><span class="line">			minLen = min(minLen, right-left+<span class="number">1</span>) <span class="comment">// 更新最小长度</span></span><br><span class="line">			currentSum -= nums[left]           <span class="comment">// 从窗口的左边界减去元素</span></span><br><span class="line">			left++                             <span class="comment">// 移动左边界</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 如果没有找到符合条件的子数组，返回0</span></span><br><span class="line">	<span class="keyword">if</span> minLen == <span class="built_in">len</span>(nums)+<span class="number">1</span>  &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> minLen</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minSubArrayLen</span><span class="params">(target <span class="type">int</span>, nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	minLen := <span class="built_in">len</span>(nums)+<span class="number">1</span> </span><br><span class="line">	left := <span class="number">0</span>                    <span class="comment">// 窗口的左边界</span></span><br><span class="line">	currentSum := <span class="number">0</span>              <span class="comment">// 当前窗口的和</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> right := <span class="number">0</span>; right &lt; <span class="built_in">len</span>(nums); right++ &#123;</span><br><span class="line">		currentSum += nums[right] <span class="comment">// 将右边界的元素加入到当前窗口的和中</span></span><br><span class="line">		<span class="comment">// 当当前窗口的和大于等于 target 时，尝试缩小窗口</span></span><br><span class="line">		<span class="keyword">for</span> currentSum &gt;= target &#123;</span><br><span class="line">			minLen = min(minLen, right-left+<span class="number">1</span>) <span class="comment">// 更新最小长度</span></span><br><span class="line">			currentSum -= nums[left]           <span class="comment">// 从窗口的左边界减去元素</span></span><br><span class="line">			left++                             <span class="comment">// 移动左边界</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 如果没有找到符合条件的子数组，返回0</span></span><br><span class="line">	<span class="keyword">if</span> minLen == <span class="built_in">len</span>(nums)+<span class="number">1</span>  &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> minLen</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="滑动窗口应用场景"><a href="#滑动窗口应用场景" class="headerlink" title="滑动窗口应用场景"></a>滑动窗口应用场景</h2><p>滑动窗口算法是一种非常实用的算法技术，它在处理数组或字符串等序列数据时特别有用。以下是一些滑动窗口算法的应用场景：</p>
 <ol>
 <li><p><strong>寻找子数组&#x2F;子串的最小&#x2F;最大和</strong>：</p>
@@ -789,6 +799,115 @@
     <span class="post-tags">
       <i class="icon-tags"></i>
         <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/08/17/记录设计验权系统时的一些随想/"><span>记录设计验权系统时的一些随想</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/08/17/记录设计验权系统时的一些随想/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-08-17T12:49:33.000Z">
+          2023-08-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="OAuth2-0协议内容"><a href="#OAuth2-0协议内容" class="headerlink" title="OAuth2.0协议内容"></a>OAuth2.0协议内容</h2><p>OAuth 2.0 是一个行业标准的协议，用于授权。它允许第三方应用获取有限的访问权限，而无需将用户名和密码提供给第三方应用。OAuth 2.0 专注于客户端开发者的简易性，同时为Web应用、桌面应用、手机和起居室设备提供专门的认证流程。以下是 OAuth 2.0 协议的核心内容和组成部分：</p>
+<ol>
+<li>角色：<br>•  资源所有者（Resource Owner）：能够授权访问其资源的用户。<br>•  资源服务器（Resource Server）：存储受保护资源的服务器，只有经过授权的客户端才能访问。<br>•  客户端（Client）：请求访问受保护资源的应用程序。<br>•  授权服务器（Authorization Server）：负责颁发访问令牌给客户端。</li>
+<li>流程：<br>•  授权码模式（Authorization Code Grant）：客户端引导资源所有者至授权服务器，用户登录并授权后，授权服务器返回一个授权码给客户端，客户端使用该码换取访问令牌。<br>•  密码模式（Resource Owner Password Credentials Grant）：客户端直接使用资源所有者的用户名和密码向授权服务器申请访问令牌。<br>•  客户端模式（Client Credentials Grant）：客户端直接向授权服务器申请访问令牌，适用于客户端代表自己访问资源的场景。<br>•  隐式模式（Implicit Grant）：适用于纯前端应用，客户端引导资源所有者至授权服务器，用户授权后，授权服务器直接返回访问令牌给客户端。<br>•  设备模式（Device Authorization Grant）：适用于无法通过常规流程进行用户交互的设备，例如物联网设备。</li>
+<li>令牌：<br>•  访问令牌（Access Token）：允许客户端访问受保护资源的令牌。<br>•  刷新令牌（Refresh Token）：用于获取新的访问令牌，通常在访问令牌过期后使用。</li>
+<li>安全性：<br>•  OAuth 2.0 要求使用HTTPS来保护所有OAuth流程中的通信，以防止令牌被截获。<br>•  访问令牌和刷新令牌应该是随机的、不可预测的，并且具有足够的长度。<br>•  客户端必须验证授权服务器的重定向URI。</li>
+<li>扩展性：<br>•  OAuth 2.0 支持多种扩展，例如开放ID连接（OpenID Connect），它允许在OAuth 2.0授权过程中传递用户身份信息。<br>OAuth 2.0 协议是复杂的，并且需要根据具体的应用场景和安全要求来正确实施。它旨在提供一个安全、灵活且可扩展的授权框架，以满足不同应用的需求。</li>
+</ol>
+<h2 id="JWT和Cookie的使用场景差异"><a href="#JWT和Cookie的使用场景差异" class="headerlink" title="JWT和Cookie的使用场景差异"></a>JWT和Cookie的使用场景差异</h2><p>JWT（JSON Web Tokens）和Cookie是两种不同的技术，它们在Web应用中用于身份验证和信息传递，但它们之间存在一些关键的区别：</p>
+<ol>
+<li>存储位置：<br>•  Cookie：存储在客户端浏览器中，由浏览器自动处理。<br>•  JWT：可以存储在客户端（通常作为URL的一部分、存储在Cookie中或者LocalStorage&#x2F;SessionStorage中），也可以存储在服务端。</li>
+<li>安全性：<br>•  Cookie：可以设置为仅通过HTTPS传输（Secure标志），并且可以设置HttpOnly标志，使得JavaScript无法访问，减少XSS攻击的风险。<br>•  JWT：本身是自包含的，包含所有必要的信息，因此不需要在服务器上存储会话信息。但是，JWT需要通过HTTPS传输以防止中间人攻击，且应使用强算法（如RS256）签名以防止篡改。</li>
+<li>大小：<br>•  Cookie：大小受限（通常每个域名限制为20-30个Cookie，每个Cookie大小限制在4KB左右）。<br>•  JWT：理论上可以更大，但因为需要在HTTP请求头中传输，所以也不宜过大，以免影响性能。</li>
+<li>性能：<br>•  Cookie：每次请求都会自动发送，可能会增加请求的大小，但不需要修改HTTP请求头。<br>•  JWT：需要在每次请求的HTTP头中明确指定，可能会增加请求头的大小，但不需要在服务器上查找会话信息。</li>
+<li>会话管理：<br>•  Cookie：依赖于服务器端的会话存储，可以很容易地实现会话的注销和失效。<br>•  JWT：由于是自包含的，不需要服务器存储会话信息，但一旦发出，除非过期，否则不能轻易撤销。</li>
+<li>跨域访问：<br>•  Cookie：受到同源策略的限制，不能跨域访问。<br>•  JWT：由于是作为请求的一部分发送，可以跨域使用。</li>
+<li>用途：<br>•  Cookie：主要用于跟踪会话状态，也可以用于存储用户偏好等信息。<br>•  JWT：主要用于身份验证和信息交换，尤其是在分布式系统中。<br>总的来说，Cookie更适合用于会话管理，而JWT更适合用于分布式系统中的身份验证和信息交换。选择使用哪种技术取决于具体的应用场景和需求。</li>
+</ol>
+<h2 id="JWT-Json-Web-Tokens-包含哪些信息"><a href="#JWT-Json-Web-Tokens-包含哪些信息" class="headerlink" title="JWT(Json Web Tokens)包含哪些信息"></a>JWT(Json Web Tokens)包含哪些信息</h2><p>JWT（JSON Web Tokens）是一种紧凑且自包含的方式，用于在各方之间以JSON对象的形式安全地传输信息。JWT通常包含三个部分，用点.分隔，分别是Header（头部）、Payload（负载）和Signature（签名）。下面是每个部分通常包含的信息：</p>
+<ol>
+<li>Header（头部）：<br>•  typ：类型，通常为JWT。<br>•  alg：指定签名算法，如HS256（HMAC SHA-256）或RS256（RSA签名）。</li>
+<li>Payload（负载）：<br>•  iss：发行人（Issuer），指的是token签发的主体。<br>•  exp：过期时间（Expiration Time），token的有效期。<br>•  iat：发行时间（Issued At），token签发的时间。<br>•  nbf：生效时间（Not Before），token在此时间前不可用。<br>•  sub：主题（Subject），通常指用户的唯一标识。<br>•  aud：受众（Audience），token的预期接收者。<br>•  jti：JWT ID，提供token的唯一标识，防止重复使用。<br>•  自定义声明：除了以上标准声明外，还可以包含其他业务相关的自定义声明。</li>
+<li>Signature（签名）：<br>•  签名部分是由Header指定的算法、一个秘密（对于HS算法）或公钥&#x2F;私钥对（对于RS或ES算法）以及Header和Payload的编码后的字符串组成的。签名用于验证消息在传输过程中未被篡改，并且，对于使用私钥签名的token，还可以验证发送者的身份。<br>JWT的结构如下所示：<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Header&gt;.&lt;Payload&gt;.&lt;Signature&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>•  Header和Payload通常使用Base64Url编码。<br>•  Signature是使用Header中指定的算法和密钥对Header和Payload的编码字符串进行签名的结果。<br>JWT的设计目的是在各方之间安全地传输信息，同时确保信息的完整性和可验证性。由于JWT可以包含敏感信息，因此在使用JWT时，必须通过HTTPS等安全协议传输，以防止中间人攻击。</p>
+<h2 id="使用哈希加密算法加密保存敏感信息的一些注意事项"><a href="#使用哈希加密算法加密保存敏感信息的一些注意事项" class="headerlink" title="使用哈希加密算法加密保存敏感信息的一些注意事项"></a>使用哈希加密算法加密保存敏感信息的一些注意事项</h2><p>使用哈希加密算法加密保存敏感信息时，需要注意以下几个重要的事项：</p>
+<ol>
+<li>选择合适的哈希算法：<br>•  应使用当前认为安全的哈希算法，如SHA-256或SHA-512，避免使用已不安全的算法，如MD5和SHA-1。</li>
+<li>盐值的使用：<br>•  为了防止彩虹表攻击，每个密码在哈希前应该加上一个唯一的盐值。盐值可以增加密码破解的难度。</li>
+<li>哈希输出长度：<br>•  哈希输出应足够长（建议256位以上），以防止暴力破解和生日攻击。</li>
+<li>安全存储哈希和盐值：<br>•  存储哈希值时，应将盐值与哈希值一起存储，但盐值本身不需要保密。</li>
+<li>避免时序和功耗分析攻击：<br>•  使用恒定时间和随机化哈希算法，以防止通过分析算法执行来破解哈希值。</li>
+<li>密码轮换和多因素身份验证：<br>•  在遭受攻击后，仅存储哈希值是不够的。应采用密码轮换和多因素身份验证。</li>
+<li>数据传输安全：<br>•  敏感数据的传输应通过安全的通信通道（如HTTPS&#x2F;TLS）进行，以防止中间人攻击。</li>
+<li>使用最新的安全标准：<br>•  加密与哈希算法不断发展，应定期更新应用程序，使用最新的安全标准和库。</li>
+<li>密码存储格式：<br>•  一些哈希算法（如bcrypt）的哈希值包含了算法标识、成本因子和盐值，这些信息都嵌入在哈希值中，无需单独存储。</li>
+<li>密码长度限制：<br>•  某些哈希算法（如bcrypt）对密码长度有限制，若密码超出此限制，需要进行额外处理。</li>
+<li>不可逆性：<br>•  哈希算法的设计理念和加密原理确保了它在密码保护中的不可替代性。通过盐、成本因子以及不可逆的特性，可以有效抵御暴力破解和彩虹表攻击。</li>
+<li>安全开发实践：<br>•  采用安全的开发实践对于保障敏感信息的安全至关重要，包括进行代码审查、定期的安全培训、漏洞扫描等。<br>遵循这些注意事项可以帮助提高敏感信息的安全性，保护用户数据免受恶意攻击。</li>
+</ol>
+<h2 id="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"><a href="#MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势" class="headerlink" title="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"></a>MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势</h2><p>MD5不如SHA-256安全的原因主要包括以下几点：</p>
+<ol>
+<li>哈希长度：<br>•  MD5产生128位的哈希值，而SHA-256产生256位的哈希值。更长的哈希值意味着更大的哈希空间，从而使得碰撞的概率更小，提高了安全性。</li>
+<li>抗碰撞性：<br>•  MD5已被证明存在漏洞，容易受到碰撞攻击，即可以找到两个不同的输入值，它们产生相同的MD5哈希值。相比之下，SHA-256对碰撞攻击的抵抗力更强，目前还没有发现有效的攻击方法。</li>
+<li>安全性：<br>•  MD5的安全性较弱，存在已知的漏洞，而SHA-256目前被认为更安全，没有发现严重的漏洞。</li>
+<li>计算性能：<br>•  尽管MD5在计算速度上比SHA-256快，但安全性是更重要的考量因素。SHA-256虽然计算速度较慢，但由于其更长的哈希长度，提供了更高的安全性。</li>
+<li>应用场景：<br>•  SHA-256由于其高安全性，被广泛应用于数字签名、区块链、文件校验等需要高安全性保障的场景。而MD5则更多用于一些对安全性要求不高的场景。</li>
+<li>雪崩效应：<br>•  SHA-256具有高的雪崩效应，即输入的微小变化会导致输出的哈希值发生巨大变化，这增强了其安全性。</li>
+<li>密码学弱点：<br>•  MD5的密码学弱点已经被广泛研究和利用，包括长度扩展攻击和碰撞攻击，而SHA-256在这方面的表现更为稳健。<br>综上所述，SHA-256在安全性、抗碰撞性、输出长度等方面都优于MD5，因此在需要高安全性的应用中，SHA-256是更安全的选择。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/工作笔记/">工作笔记</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/JWT/">JWT</a><a href="/tags/OAuth2-0/">OAuth2.0</a><a href="/tags/哈希算法/">哈希算法</a>
     </span>
     
 
