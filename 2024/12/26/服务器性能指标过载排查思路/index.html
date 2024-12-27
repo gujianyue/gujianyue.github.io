@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>服务器性能指标过载排查思路 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="当 Linux 服务器 的 CPU、内存 或 网络 出现过载时，通常意味着系统正在面临资源瓶颈或异常行为。为了排查这个问题，需要通过一系列的系统工具和方法来诊断和识别瓶颈的根本原因。以下是一些常见的排查步骤：
+
+检查 CPU 使用情况
+
+查看整体 CPU 使用情况：    •	使用 top 或 ht">
+  
+
+  
+  
+  <meta name="keywords" content="运维">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="服务器性能指标过载排查思路"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>服务器性能指标过载排查思路</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/26/服务器性能指标过载排查思路/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-26T13:28:52.000Z">
+          2024-12-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>当 Linux 服务器 的 CPU、内存 或 网络 出现过载时，通常意味着系统正在面临资源瓶颈或异常行为。为了排查这个问题，需要通过一系列的系统工具和方法来诊断和识别瓶颈的根本原因。以下是一些常见的排查步骤：</p>
+<ol>
+<li>检查 CPU 使用情况</li>
+</ol>
+<p>查看整体 CPU 使用情况：<br>    •	使用 top 或 htop 命令查看当前系统的 CPU 使用率。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+<p>htop 提供了更加友好的界面，可以使用它来动态地查看 CPU 负载。<br>    •	%us：用户空间的 CPU 使用比例<br>    •	%sy：内核空间的 CPU 使用比例<br>    •	%id：空闲 CPU 时间<br>    •	%wa：等待 I&#x2F;O 的 CPU 时间<br>    •	%st：虚拟机偷取的 CPU 时间</p>
+<p>查看每个进程的 CPU 使用情况：<br>    •	使用 top 或 ps 命令查看当前占用 CPU 的进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -o %CPU</span><br></pre></td></tr></table></figure>
+<p>或者使用 ps 列出占用 CPU 的进程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span>=-%cpu | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+
+
+<p>检查是否有进程陷入 无响应状态：<br>    •	如果进程处于 D（uninterruptible sleep） 状态，表示它在等待 I&#x2F;O 操作完成，可能导致 CPU 被阻塞。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep <span class="string">&#x27; D &#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>检查系统负载（load average）：<br>    •	使用 uptime 或 top 命令查看系统负载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uptime</span></span><br></pre></td></tr></table></figure>
+<p>负载均衡值（load average）显示的是在过去 1 分钟、5 分钟和 15 分钟内的平均进程数。高负载可能意味着系统 CPU 资源紧张。</p>
+<ol start="2">
+<li>检查内存使用情况</li>
+</ol>
+<p>使用 free 命令查看内存使用：<br>    •	free -m 可以查看系统内存的使用情况（单位是 MB）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free -m</span><br></pre></td></tr></table></figure>
+<pre><code>•	Mem：总内存、已用内存、剩余内存。
+•	Swap：交换分区的使用情况。高 swap 使用可能意味着物理内存不足，导致系统频繁交换数据到磁盘。
+</code></pre>
+<p>检查进程的内存占用情况：<br>    •	使用 top 或 ps 命令查看占用内存最多的进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -o %MEM</span><br></pre></td></tr></table></figure>
+<p>或者使用 ps 查看内存使用最多的进程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span>=-%mem | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+
+
+<p>检查是否有 内存泄漏：<br>    •	如果系统的可用内存持续下降，可以使用 smem（或者 pmap）查看各个进程的内存使用情况，排查是否有内存泄漏。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smem -r</span><br></pre></td></tr></table></figure>
+
+
+<p>使用 vmstat 查看虚拟内存情况：<br>    •	vmstat 提供了系统的内存、交换区、I&#x2F;O、进程、CPU 等信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vmstat 1</span><br></pre></td></tr></table></figure>
+<pre><code>•	si 和 so 分别表示交换内存的输入和输出。高交换活动通常意味着物理内存不足。
+</code></pre>
+<p>检查内存是否有 OOM（Out of Memory） 错误：<br>    •	如果系统没有足够的内存，它可能会启动 OOM Killer 来终止一些进程以释放内存。可以通过查看 &#x2F;var&#x2F;log&#x2F;messages 或 &#x2F;var&#x2F;log&#x2F;syslog 日志文件来确认是否发生了 OOM 错误。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/log/syslog | grep -i <span class="string">&quot;out of memory&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<ol start="3">
+<li>检查网络使用情况</li>
+</ol>
+<p>使用 netstat 或 ss 查看网络连接：<br>    •	netstat 或 ss 可以查看当前的网络连接及其状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -tulnp</span><br></pre></td></tr></table></figure>
+<p>或者：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -tuln</span><br></pre></td></tr></table></figure>
+<pre><code>•	通过 -t 查看 TCP 连接，-u 查看 UDP 连接，-l 查看正在监听的端口，-n 显示数字格式。
+</code></pre>
+<p>检查网络带宽使用情况：<br>    •	使用 iftop 或 nload 监控网络流量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iftop</span><br></pre></td></tr></table></figure>
+<p>或者：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nload</span><br></pre></td></tr></table></figure>
+<p>这些工具可以帮助你实时查看每个连接的流量情况，找出是否存在异常的流量高峰。</p>
+<p>检查 TCP 状态：<br>    •	使用 ss 查看 TCP 连接的状态，查找是否存在大量的 TIME_WAIT 或 CLOSE_WAIT 状态的连接，可能意味着有大量的关闭连接或连接未正常关闭。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -s</span><br></pre></td></tr></table></figure>
+<p>你可以检查 TIME_WAIT 和 CLOSE_WAIT 状态，如果这些连接积压过多，可能导致网络性能下降。</p>
+<p>网络丢包或延迟：<br>    •	使用 ping 测试到其他主机的连通性，检查是否有丢包现象：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c 10 &lt;destination_ip&gt;</span><br></pre></td></tr></table></figure>
+<p>你可以查看是否存在高延迟或丢包，丢包可能指示网络硬件或带宽问题。</p>
+<ol start="4">
+<li>检查磁盘 I&#x2F;O 使用情况</li>
+</ol>
+<p>使用 iostat 查看磁盘 I&#x2F;O 情况：<br>    •	使用 iostat 检查磁盘的读取&#x2F;写入情况。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iostat -x 1</span><br></pre></td></tr></table></figure>
+<pre><code>•	%util：磁盘利用率，如果值接近 100%，表示磁盘繁忙。
+•	await：磁盘操作的平均等待时间，较高的 await 值可能表示磁盘性能瓶颈。
+</code></pre>
+<p>使用 dstat 或 iotop 监控磁盘 I&#x2F;O：<br>    •	dstat 或 iotop 可以显示实时的磁盘 I&#x2F;O 使用情况，帮助你定位是否有某些进程正在占用大量磁盘 I&#x2F;O。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dstat -cdlmn</span><br></pre></td></tr></table></figure>
+<p>或者使用 iotop：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iotop</span><br></pre></td></tr></table></figure>
+
+
+<ol start="5">
+<li><p>分析日志文件<br> •	查看 &#x2F;var&#x2F;log&#x2F;syslog、&#x2F;var&#x2F;log&#x2F;messages、&#x2F;var&#x2F;log&#x2F;dmesg 等系统日志，可能会有有关硬件故障、磁盘问题或其他异常行为的警告或错误信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/log/syslog | grep -i <span class="string">&quot;error&quot;</span></span><br><span class="line"><span class="built_in">cat</span> /var/log/messages | grep -i <span class="string">&quot;error&quot;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>其他工具<br> •	sar（System Activity Reporter）：可以查看过去的系统性能数据，帮助你发现历史上的问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sar -u 1 3  <span class="comment"># 查看 CPU 使用情况</span></span><br><span class="line">sar -r 1 3  <span class="comment"># 查看内存使用情况</span></span><br></pre></td></tr></table></figure>
+
+<p> •	dmesg：检查内核日志，查看是否有硬件故障或内存错误。</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmesg | grep -i error</span><br></pre></td></tr></table></figure>
+
+
+<p>总结</p>
+<p>当 Linux 服务器出现 CPU、内存或网络过载时，需要结合多种工具来诊断问题。通过 top&#x2F;htop 查看 CPU 和进程状态，使用 free&#x2F;iostat 监控内存和磁盘使用情况，利用 iftop&#x2F;ss 排查网络瓶颈，以及通过日志文件了解系统错误和警告。系统性能问题往往是多因素的，定位问题时需要逐步排查。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Linux/">Linux</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/运维/">运维</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2024 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

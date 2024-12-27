@@ -65,6 +65,336 @@
 
   
     
+    <h3 class="article-title"><a href="/2024/03/25/理解golang的Context设计/"><span>理解golang的Context设计</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/03/25/理解golang的Context设计/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-03-25T03:22:57.000Z">
+          2024-03-25
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="Context的使用场景"><a href="#Context的使用场景" class="headerlink" title="Context的使用场景"></a>Context的使用场景</h2><p>Context的设计初衷就是为了在多个goroutine之间传递和同步取消信号，以减少资源的消耗和占用，具体有以下使用场景：</p>
+<ol>
+<li>作为请求API的调用方&amp;被调用方时的超时控制，通常用于数据库或者网络连接的超时控制；</li>
+<li>作为各协程之间共用的变量池例如Gin框架中各中间件链式调用时互相传递Context；<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// Deadline returns the time when work done on behalf of this context </span></span><br><span class="line">    <span class="comment">// should be canceled. </span></span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="type">bool</span>)</span><br><span class="line"><span class="comment">// Done returns a channel that&#x27;s closed when work done on behalf of this</span></span><br><span class="line">	<span class="comment">// context should be canceled.</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"><span class="comment">// If Done is not yet closed, Err returns nil.</span></span><br><span class="line">	<span class="comment">// If Done is closed, Err returns a non-nil error explaining why:</span></span><br><span class="line">	<span class="comment">// Canceled if the context was canceled</span></span><br><span class="line">	<span class="comment">// or DeadlineExceeded if the context&#x27;s deadline passed.</span></span><br><span class="line">	Err() <span class="type">error</span></span><br><span class="line"><span class="comment">// Value returns the value associated with this context for key, or nil</span></span><br><span class="line">	<span class="comment">// if no value is associated with key. Successive calls to Value with</span></span><br><span class="line">	<span class="comment">// the same key returns the same result.</span></span><br><span class="line">	Value(key any) any</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Context超时控制的实现原理"><a href="#Context超时控制的实现原理" class="headerlink" title="Context超时控制的实现原理"></a>Context超时控制的实现原理</h2><p>通过<code>Done()</code>传递超时信号，并使用Select监听超时信号是否传入，官方注释如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Done is provided for use in select statements:</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">//  // Stream generates values with DoSomething and sends them to out</span></span><br><span class="line">	<span class="comment">//  // until DoSomething returns an error or ctx.Done is closed.</span></span><br><span class="line">	 <span class="function"><span class="keyword">func</span> <span class="title">Stream</span><span class="params">(ctx context.Context, out <span class="keyword">chan</span>&lt;- Value)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	 	<span class="keyword">for</span> &#123;</span><br><span class="line">	 		v, err := DoSomething(ctx)</span><br><span class="line">	 		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	 			<span class="keyword">return</span> err</span><br><span class="line">	 		&#125;</span><br><span class="line">	 		<span class="keyword">select</span> &#123;</span><br><span class="line">	 		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">	 			<span class="keyword">return</span> ctx.Err()</span><br><span class="line">	 		<span class="keyword">case</span> out &lt;- v:</span><br><span class="line">	 		&#125;</span><br><span class="line">	 	&#125;</span><br><span class="line">	 &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Context的Keys池如何保证线程安全"><a href="#Context的Keys池如何保证线程安全" class="headerlink" title="Context的Keys池如何保证线程安全"></a>Context的Keys池如何保证线程安全</h2><p>官方<code>context</code>包下的Context接口内部对Keys没有使用传统锁的机制来保证线程安全，每次对<code>Context</code>的操作都会创建一个新的上下文实例，而不是改变现有的实例（通过<code>WithDeadline()</code>,<code>WithTimeOut()</code>和<code>WithCancle()</code>这些方法派生父节点上下文的副本），这样的设计避免了对共享资源的直接修改，从而避免了锁的需要。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithValue</span><span class="params">(parent Context, key, val any)</span></span> Context &#123;</span><br><span class="line">	<span class="keyword">if</span> parent == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;cannot create context from nil parent&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;nil key&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !reflectlite.TypeOf(key).Comparable() &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;key is not comparable&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;valueCtx&#123;parent, key, val&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Gin框架实现的<code>Context</code>内部是通过读写锁保证Key-Value变量池的线程安全</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set is used to store a new key/value pair exclusively for this context.</span></span><br><span class="line"><span class="comment">// It also lazy initializes  c.Keys if it was not used previously.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span></span> Set(key <span class="type">string</span>, value any) &#123;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.Unlock()</span><br><span class="line">	<span class="keyword">if</span> c.Keys == <span class="literal">nil</span> &#123;</span><br><span class="line">		c.Keys = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">string</span>]any)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c.Keys[key] = value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get returns the value for the given key, ie: (value, true).</span></span><br><span class="line"><span class="comment">// If the value does not exist it returns (nil, false)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span></span> Get(key <span class="type">string</span>) (value any, exists <span class="type">bool</span>) &#123;</span><br><span class="line">	c.mu.RLock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.RUnlock()</span><br><span class="line">	value, exists = c.Keys[key]</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/08/17/记录设计验权系统时的一些随想/"><span>记录设计验权系统时的一些随想</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/08/17/记录设计验权系统时的一些随想/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-08-17T12:49:33.000Z">
+          2023-08-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="OAuth2-0协议内容"><a href="#OAuth2-0协议内容" class="headerlink" title="OAuth2.0协议内容"></a>OAuth2.0协议内容</h2><p>OAuth 2.0 是一个行业标准的协议，用于授权。它允许第三方应用获取有限的访问权限，而无需将用户名和密码提供给第三方应用。OAuth 2.0 专注于客户端开发者的简易性，同时为Web应用、桌面应用、手机和起居室设备提供专门的认证流程。以下是 OAuth 2.0 协议的核心内容和组成部分：</p>
+<ol>
+<li>角色：<br>•  资源所有者（Resource Owner）：能够授权访问其资源的用户。<br>•  资源服务器（Resource Server）：存储受保护资源的服务器，只有经过授权的客户端才能访问。<br>•  客户端（Client）：请求访问受保护资源的应用程序。<br>•  授权服务器（Authorization Server）：负责颁发访问令牌给客户端。</li>
+<li>流程：<br>•  授权码模式（Authorization Code Grant）：客户端引导资源所有者至授权服务器，用户登录并授权后，授权服务器返回一个授权码给客户端，客户端使用该码换取访问令牌。<br>•  密码模式（Resource Owner Password Credentials Grant）：客户端直接使用资源所有者的用户名和密码向授权服务器申请访问令牌。<br>•  客户端模式（Client Credentials Grant）：客户端直接向授权服务器申请访问令牌，适用于客户端代表自己访问资源的场景。<br>•  隐式模式（Implicit Grant）：适用于纯前端应用，客户端引导资源所有者至授权服务器，用户授权后，授权服务器直接返回访问令牌给客户端。<br>•  设备模式（Device Authorization Grant）：适用于无法通过常规流程进行用户交互的设备，例如物联网设备。</li>
+<li>令牌：<br>•  访问令牌（Access Token）：允许客户端访问受保护资源的令牌。<br>•  刷新令牌（Refresh Token）：用于获取新的访问令牌，通常在访问令牌过期后使用。</li>
+<li>安全性：<br>•  OAuth 2.0 要求使用HTTPS来保护所有OAuth流程中的通信，以防止令牌被截获。<br>•  访问令牌和刷新令牌应该是随机的、不可预测的，并且具有足够的长度。<br>•  客户端必须验证授权服务器的重定向URI。</li>
+<li>扩展性：<br>•  OAuth 2.0 支持多种扩展，例如开放ID连接（OpenID Connect），它允许在OAuth 2.0授权过程中传递用户身份信息。<br>OAuth 2.0 协议是复杂的，并且需要根据具体的应用场景和安全要求来正确实施。它旨在提供一个安全、灵活且可扩展的授权框架，以满足不同应用的需求。</li>
+</ol>
+<h2 id="JWT和Cookie的使用场景差异"><a href="#JWT和Cookie的使用场景差异" class="headerlink" title="JWT和Cookie的使用场景差异"></a>JWT和Cookie的使用场景差异</h2><p>JWT（JSON Web Tokens）和Cookie是两种不同的技术，它们在Web应用中用于身份验证和信息传递，但它们之间存在一些关键的区别：</p>
+<ol>
+<li>存储位置：<br>•  Cookie：存储在客户端浏览器中，由浏览器自动处理。<br>•  JWT：可以存储在客户端（通常作为URL的一部分、存储在Cookie中或者LocalStorage&#x2F;SessionStorage中），也可以存储在服务端。</li>
+<li>安全性：<br>•  Cookie：可以设置为仅通过HTTPS传输（Secure标志），并且可以设置HttpOnly标志，使得JavaScript无法访问，减少XSS攻击的风险。<br>•  JWT：本身是自包含的，包含所有必要的信息，因此不需要在服务器上存储会话信息。但是，JWT需要通过HTTPS传输以防止中间人攻击，且应使用强算法（如RS256）签名以防止篡改。</li>
+<li>大小：<br>•  Cookie：大小受限（通常每个域名限制为20-30个Cookie，每个Cookie大小限制在4KB左右）。<br>•  JWT：理论上可以更大，但因为需要在HTTP请求头中传输，所以也不宜过大，以免影响性能。</li>
+<li>性能：<br>•  Cookie：每次请求都会自动发送，可能会增加请求的大小，但不需要修改HTTP请求头。<br>•  JWT：需要在每次请求的HTTP头中明确指定，可能会增加请求头的大小，但不需要在服务器上查找会话信息。</li>
+<li>会话管理：<br>•  Cookie：依赖于服务器端的会话存储，可以很容易地实现会话的注销和失效。<br>•  JWT：由于是自包含的，不需要服务器存储会话信息，但一旦发出，除非过期，否则不能轻易撤销。</li>
+<li>跨域访问：<br>•  Cookie：受到同源策略的限制，不能跨域访问。<br>•  JWT：由于是作为请求的一部分发送，可以跨域使用。</li>
+<li>用途：<br>•  Cookie：主要用于跟踪会话状态，也可以用于存储用户偏好等信息。<br>•  JWT：主要用于身份验证和信息交换，尤其是在分布式系统中。<br>总的来说，Cookie更适合用于会话管理，而JWT更适合用于分布式系统中的身份验证和信息交换。选择使用哪种技术取决于具体的应用场景和需求。</li>
+</ol>
+<h2 id="JWT-Json-Web-Tokens-包含哪些信息"><a href="#JWT-Json-Web-Tokens-包含哪些信息" class="headerlink" title="JWT(Json Web Tokens)包含哪些信息"></a>JWT(Json Web Tokens)包含哪些信息</h2><p>JWT（JSON Web Tokens）是一种紧凑且自包含的方式，用于在各方之间以JSON对象的形式安全地传输信息。JWT通常包含三个部分，用点.分隔，分别是Header（头部）、Payload（负载）和Signature（签名）。下面是每个部分通常包含的信息：</p>
+<ol>
+<li>Header（头部）：<br>•  typ：类型，通常为JWT。<br>•  alg：指定签名算法，如HS256（HMAC SHA-256）或RS256（RSA签名）。</li>
+<li>Payload（负载）：<br>•  iss：发行人（Issuer），指的是token签发的主体。<br>•  exp：过期时间（Expiration Time），token的有效期。<br>•  iat：发行时间（Issued At），token签发的时间。<br>•  nbf：生效时间（Not Before），token在此时间前不可用。<br>•  sub：主题（Subject），通常指用户的唯一标识。<br>•  aud：受众（Audience），token的预期接收者。<br>•  jti：JWT ID，提供token的唯一标识，防止重复使用。<br>•  自定义声明：除了以上标准声明外，还可以包含其他业务相关的自定义声明。</li>
+<li>Signature（签名）：<br>•  签名部分是由Header指定的算法、一个秘密（对于HS算法）或公钥&#x2F;私钥对（对于RS或ES算法）以及Header和Payload的编码后的字符串组成的。签名用于验证消息在传输过程中未被篡改，并且，对于使用私钥签名的token，还可以验证发送者的身份。<br>JWT的结构如下所示：<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Header&gt;.&lt;Payload&gt;.&lt;Signature&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>•  Header和Payload通常使用Base64Url编码。<br>•  Signature是使用Header中指定的算法和密钥对Header和Payload的编码字符串进行签名的结果。<br>JWT的设计目的是在各方之间安全地传输信息，同时确保信息的完整性和可验证性。由于JWT可以包含敏感信息，因此在使用JWT时，必须通过HTTPS等安全协议传输，以防止中间人攻击。</p>
+<h2 id="使用哈希加密算法加密保存敏感信息的一些注意事项"><a href="#使用哈希加密算法加密保存敏感信息的一些注意事项" class="headerlink" title="使用哈希加密算法加密保存敏感信息的一些注意事项"></a>使用哈希加密算法加密保存敏感信息的一些注意事项</h2><p>使用哈希加密算法加密保存敏感信息时，需要注意以下几个重要的事项：</p>
+<ol>
+<li>选择合适的哈希算法：<br>•  应使用当前认为安全的哈希算法，如SHA-256或SHA-512，避免使用已不安全的算法，如MD5和SHA-1。</li>
+<li>盐值的使用：<br>•  为了防止彩虹表攻击，每个密码在哈希前应该加上一个唯一的盐值。盐值可以增加密码破解的难度。</li>
+<li>哈希输出长度：<br>•  哈希输出应足够长（建议256位以上），以防止暴力破解和生日攻击。</li>
+<li>安全存储哈希和盐值：<br>•  存储哈希值时，应将盐值与哈希值一起存储，但盐值本身不需要保密。</li>
+<li>避免时序和功耗分析攻击：<br>•  使用恒定时间和随机化哈希算法，以防止通过分析算法执行来破解哈希值。</li>
+<li>密码轮换和多因素身份验证：<br>•  在遭受攻击后，仅存储哈希值是不够的。应采用密码轮换和多因素身份验证。</li>
+<li>数据传输安全：<br>•  敏感数据的传输应通过安全的通信通道（如HTTPS&#x2F;TLS）进行，以防止中间人攻击。</li>
+<li>使用最新的安全标准：<br>•  加密与哈希算法不断发展，应定期更新应用程序，使用最新的安全标准和库。</li>
+<li>密码存储格式：<br>•  一些哈希算法（如bcrypt）的哈希值包含了算法标识、成本因子和盐值，这些信息都嵌入在哈希值中，无需单独存储。</li>
+<li>密码长度限制：<br>•  某些哈希算法（如bcrypt）对密码长度有限制，若密码超出此限制，需要进行额外处理。</li>
+<li>不可逆性：<br>•  哈希算法的设计理念和加密原理确保了它在密码保护中的不可替代性。通过盐、成本因子以及不可逆的特性，可以有效抵御暴力破解和彩虹表攻击。</li>
+<li>安全开发实践：<br>•  采用安全的开发实践对于保障敏感信息的安全至关重要，包括进行代码审查、定期的安全培训、漏洞扫描等。<br>遵循这些注意事项可以帮助提高敏感信息的安全性，保护用户数据免受恶意攻击。</li>
+</ol>
+<h2 id="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"><a href="#MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势" class="headerlink" title="MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势"></a>MD5保存密码为什么不够安全了，SHA-256相比MD5有什么优势</h2><p>MD5不如SHA-256安全的原因主要包括以下几点：</p>
+<ol>
+<li>哈希长度：<br>•  MD5产生128位的哈希值，而SHA-256产生256位的哈希值。更长的哈希值意味着更大的哈希空间，从而使得碰撞的概率更小，提高了安全性。</li>
+<li>抗碰撞性：<br>•  MD5已被证明存在漏洞，容易受到碰撞攻击，即可以找到两个不同的输入值，它们产生相同的MD5哈希值。相比之下，SHA-256对碰撞攻击的抵抗力更强，目前还没有发现有效的攻击方法。</li>
+<li>安全性：<br>•  MD5的安全性较弱，存在已知的漏洞，而SHA-256目前被认为更安全，没有发现严重的漏洞。</li>
+<li>计算性能：<br>•  尽管MD5在计算速度上比SHA-256快，但安全性是更重要的考量因素。SHA-256虽然计算速度较慢，但由于其更长的哈希长度，提供了更高的安全性。</li>
+<li>应用场景：<br>•  SHA-256由于其高安全性，被广泛应用于数字签名、区块链、文件校验等需要高安全性保障的场景。而MD5则更多用于一些对安全性要求不高的场景。</li>
+<li>雪崩效应：<br>•  SHA-256具有高的雪崩效应，即输入的微小变化会导致输出的哈希值发生巨大变化，这增强了其安全性。</li>
+<li>密码学弱点：<br>•  MD5的密码学弱点已经被广泛研究和利用，包括长度扩展攻击和碰撞攻击，而SHA-256在这方面的表现更为稳健。<br>综上所述，SHA-256在安全性、抗碰撞性、输出长度等方面都优于MD5，因此在需要高安全性的应用中，SHA-256是更安全的选择。</li>
+</ol>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/工作笔记/">工作笔记</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/JWT/">JWT</a><a href="/tags/OAuth2-0/">OAuth2.0</a><a href="/tags/哈希算法/">哈希算法</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/07/17/对GPM协程调度模型的个人理解/"><span>GPM协程调度模型的工作原理</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/07/17/对GPM协程调度模型的个人理解/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-07-17T13:35:28.000Z">
+          2023-07-17
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>理解GPM协程调度模型工作原理之前，先了解下<strong>协程、线程、进程之间的区别：</strong><br>    进程是操作系统进行资源分配的基本单位，线程是CPU调度的基本单位，其中协程相对于CPU调度的线程可以区分为用户态的线程和内核态的线程，实际运行时，CPU仍然只切换内核态的线程，协程可以通过协程调度器，让多个用户态的线程队列和一个CPU轮转期内核态的线程绑定运行也即在用户态实现并发，以达到减少线程切换时CPU资源浪费的目的。<br>协程的目的是在执行多线程任务时，减少CPU在切换线程上的调度消耗，以达到提高CPU的利用率。</p>
+<p>GPM的G是goroutine协程，P是processor处理器是抽象的处理器，包含了协程运行的环境资源，M是Machine线程，内核状态的线程。goroutine相比于广义的协程，占用更小的内存空间，只占几KB的内存（线程占用约4MB，广义协程也是MB级别），调度更加灵活</p>
+<p>G 表示 Goroutine，也就是 Go 语言中的轻量级线程。Goroutine 是一种并发执行的抽象，它比传统的线程更轻量、更高效，并且可以很容易地创建和销毁。</p>
+<p>P 表示 Processor，也可以理解为上下文处理器。每个 P 其实就是一个相当于操作系统线程的抽象，负责执行 Goroutine。P 的个数可以通过 <code>GOMAXPROCS</code> 环境变量或者 <code>runtime.GOMAXPROCS</code> 函数进行设置。</p>
+<p>M 表示 Machine，也就是操作系统线程和内核的直接映射，它负责管理真实的线程资源，并与操作系统进行交互。在 GPM 调度模型中，有多个 M，可以与多个 P 绑定。</p>
+<p>N 表示工作队列的长度。工作队列用来存放待执行的 Goroutine，当某个 P 处于空闲状态时，会从工作队列中取出 Goroutine 执行。</p>
+<p>GPM 调度模型的工作流程如下：</p>
+<ol>
+<li>当创建一个 Goroutine 时，它被放入当前 P 的本地队列（local run queue）中。</li>
+<li>当本地队列为空时，P 会尝试从全局队列（global run queue）中偷取 Goroutine。</li>
+<li>如果全局队列也为空，P 则会去其他空闲的 P 偷取 Goroutine。</li>
+<li>当 P 获取到 Goroutine 后，将其放入自己的本地队列并执行。</li>
+<li>P 执行完毕后，会检查是否需要进行垃圾回收操作。</li>
+<li>若某个 P 长时间没有进展（例如发生了系统调用或者进入了休眠状态），它会释放与之关联的 M，并允许其他 Goroutine 使用。</li>
+<li>被释放的 M 可以绑定到其他的 P，并开始执行新的 Goroutine。</li>
+</ol>
+<p>总结起来，GPM 调度模型通过将 Goroutine 分配给不同的 P 来实现并发执行，同时利用工作队列和偷取策略来平衡负载。这种调度模型在高并发、异步执行的场景下表现出色，使得开发者可以轻松地编写高效、高并发的程序。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/八股文/">八股文</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/golang/">golang</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/2023/07/01/尝试用python实现贪吃蛇/"><span>尝试用python实现贪吃蛇</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2023/07/01/尝试用python实现贪吃蛇/" rel="bookmark">
+        <time class="entry-date published" datetime="2023-07-01T01:07:18.000Z">
+          2023-07-01
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="/../assets/pythonSnake%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="流程图"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: KEYDOWN.K_ENTER</span><br><span class="line">op0=&gt;operation: 食物刷新</span><br><span class="line">op1=&gt;operation: 控制行进方向</span><br><span class="line">cond1=&gt;condition: 吃到食物?</span><br><span class="line">cond2=&gt;condition: 触碰到边界或身体?</span><br><span class="line">e=&gt;end: Game Over</span><br><span class="line"></span><br><span class="line">st-&gt;op0-&gt;op1-&gt;cond1-&gt;cond2</span><br><span class="line">cond1(yes)-&gt;op0</span><br><span class="line">cond1(no)-&gt;cond2</span><br><span class="line">cond2(yes)-&gt;e</span><br><span class="line">cond2(no)-&gt;op1</span><br></pre></td></tr></table></figure>
+
+<h3 id="场景元素图"><a href="#场景元素图" class="headerlink" title="场景元素图"></a>场景元素图</h3><p><img src="/../assets/%E5%9C%BA%E6%99%AF%E5%85%83%E7%B4%A0%E5%9B%BE-%E8%B4%AA%E5%90%83%E8%9B%87.png" alt="场景元素图-贪吃蛇"></p>
+<h3 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h3><p>方向调整</p>
+<h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><p>刷新食物位置</p>
+<p>吃到食物</p>
+<p>触碰到边界</p>
+<h3 id="数据结构设计"><a href="#数据结构设计" class="headerlink" title="数据结构设计"></a>数据结构设计</h3><p>二维画布</p>
+<p>一维蛇</p>
+<p>点食物</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># author：Wangdali time:2021年1月20日16:08:44</span></span><br><span class="line"><span class="comment">#python实现：贪吃蛇</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">游戏玩法：回车开始游戏；空格暂停游戏/继续游戏；方向键/wsad控制小蛇走向</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">思路：用列表存储蛇的身体；用浅色表示身体，深色背景将身体凸显出来；</span></span><br><span class="line"><span class="string">蛇的移动：仔细观察，是：身体除头和尾不动、尾部消失，头部增加，所以，新添加的元素放在列表头部、删除尾部元素；</span></span><br><span class="line"><span class="string">游戏结束判定策略：超出边界；触碰到自己的身体：蛇前进的下一格子为身体的一部分（即在列表中）。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#注：因为在列表中需要频繁添加和删除元素，所以用deque容器代替列表；是因为deque具有高效的插入和删除效率</span></span><br><span class="line"><span class="comment">#初始化蛇，长度为3，放置在屏幕左上角；</span></span><br><span class="line"><span class="comment">#导包</span></span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> pygame</span><br><span class="line"><span class="keyword">from</span> pygame.<span class="built_in">locals</span> <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="comment">#基础设置</span></span><br><span class="line">Screen_Height=<span class="number">720</span></span><br><span class="line">Screen_Width=<span class="number">1280</span></span><br><span class="line">Size=<span class="number">20</span><span class="comment">#小方格大小</span></span><br><span class="line">Line_Width=<span class="number">1</span></span><br><span class="line"><span class="comment">#游戏区域的坐标范围</span></span><br><span class="line">Area_x=(<span class="number">0</span>,Screen_Width//Size-<span class="number">1</span>) <span class="comment">#0是左边界，1是右边界 #注：python中//为整数除法；/为浮点数除法</span></span><br><span class="line">Area_y=(<span class="number">2</span>,Screen_Height//Size-<span class="number">1</span>)</span><br><span class="line"><span class="comment">#食物的初步设置</span></span><br><span class="line"><span class="comment">#食物的分值+颜色</span></span><br><span class="line">Food_Style_List=[(<span class="number">10</span>,(<span class="number">255</span>,<span class="number">100</span>,<span class="number">100</span>)),(<span class="number">20</span>,(<span class="number">100</span>,<span class="number">255</span>,<span class="number">100</span>)),(<span class="number">30</span>,(<span class="number">100</span>,<span class="number">100</span>,<span class="number">255</span>))]</span><br><span class="line"><span class="comment">#整体颜色设置</span></span><br><span class="line">Light=(<span class="number">100</span>,<span class="number">100</span>,<span class="number">100</span>)</span><br><span class="line">Dark=(<span class="number">200</span>,<span class="number">200</span>,<span class="number">200</span>)</span><br><span class="line">Black=(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">Red=(<span class="number">200</span>,<span class="number">30</span>,<span class="number">30</span>)</span><br><span class="line">Back_Ground=(<span class="number">40</span>,<span class="number">40</span>,<span class="number">60</span>)</span><br><span class="line"><span class="comment">#文本输出格式设置</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Print_Txt</span>(<span class="params">screen,font,x,y,text,fcolor=(<span class="params"><span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span></span>)</span>):</span><br><span class="line">    <span class="comment">#font.render参数意义：.render（内容，是否抗锯齿，字体颜色，字体背景颜色）</span></span><br><span class="line">    Text=font.render(text,<span class="literal">True</span>,fcolor)</span><br><span class="line">    screen.blit(Text,(x,y))</span><br><span class="line"><span class="comment">#初始化蛇</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">init_snake</span>():</span><br><span class="line">    snake=deque()</span><br><span class="line">    snake.append((<span class="number">2</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    snake.append((<span class="number">1</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    snake.append((<span class="number">0</span>,Area_y[<span class="number">0</span>]))</span><br><span class="line">    <span class="keyword">return</span> snake</span><br><span class="line"><span class="comment">#食物设置</span></span><br><span class="line"><span class="comment">#注意需要对食物出现在蛇身上的情况进行判断</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Creat_Food</span>(<span class="params">snake</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    注：randint 产生的随机数区间是包含左右极限的，</span></span><br><span class="line"><span class="string">    也就是说左右都是闭区间的[1, n]，能取到1和n。</span></span><br><span class="line"><span class="string">    而 randrange 产生的随机数区间只包含左极限，</span></span><br><span class="line"><span class="string">    也就是左闭右开的[1, n)，1能取到，而n取不到。randint</span></span><br><span class="line"><span class="string">    产生的随机数是在指定的某个区间内的一个值，</span></span><br><span class="line"><span class="string">    而 randrange 产生的随机数可以设定一个步长，也就是一个间隔。</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    food_x=random.randint(Area_x[<span class="number">0</span>],Area_x[<span class="number">1</span>]) <span class="comment">#此处有疑问</span></span><br><span class="line">    food_y=random.randint(Area_y[<span class="number">0</span>],Area_y[<span class="number">1</span>])</span><br><span class="line">    <span class="comment">#如果食物出现在蛇上，重来；</span></span><br><span class="line">    <span class="keyword">while</span>(food_x,food_y)<span class="keyword">in</span> snake:</span><br><span class="line">        food_x = random.randint(Area_x[<span class="number">0</span>], Area_x[<span class="number">1</span>])</span><br><span class="line">        food_y = random.randint(Area_y[[<span class="number">0</span>], Area_y[<span class="number">1</span>]])</span><br><span class="line">    <span class="keyword">return</span> food_x,food_y</span><br><span class="line"><span class="comment">#食物风格</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Food_Style</span>():</span><br><span class="line">    <span class="keyword">return</span> Food_Style_List[random.randint(<span class="number">0</span>,<span class="number">2</span>)] <span class="comment">#返回随机的分值和颜色</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    pygame.init()</span><br><span class="line">    screen=pygame.display.set_mode((Screen_Width,Screen_Height)) <span class="comment">#初始化一个准备显示的窗口或屏幕</span></span><br><span class="line">    pygame.display.set_caption(<span class="string">&#x27;贪吃蛇&#x27;</span>) <span class="comment">#Set the current window caption</span></span><br><span class="line">    <span class="comment">#得分字体设置</span></span><br><span class="line">    font1=pygame.font.SysFont(<span class="string">&#x27;SimHei&#x27;</span>,<span class="number">24</span>)</span><br><span class="line">    <span class="comment">#GO字体设置</span></span><br><span class="line">    font2 = pygame.font.SysFont(<span class="literal">None</span>, <span class="number">72</span>)</span><br><span class="line">    fwidth, fheight = font2.size(<span class="string">&#x27;GAME OVER&#x27;</span>) <span class="comment">###</span></span><br><span class="line">    <span class="comment">#程序bug修复：如果蛇在向右移动，快速点击分别施加向下、向左的命令，向下的命令会被覆盖，只有向左的命令被接受，直接GameOver</span></span><br><span class="line">    <span class="comment"># b变量为了防止这个情况发生</span></span><br><span class="line">    b=<span class="literal">True</span></span><br><span class="line">    <span class="comment">#蛇</span></span><br><span class="line">    snake=init_snake()</span><br><span class="line">    <span class="comment">#食物</span></span><br><span class="line">    food=Creat_Food(snake)</span><br><span class="line">    food_style=Food_Style()</span><br><span class="line">    <span class="comment">#方向控制</span></span><br><span class="line">    pos=(<span class="number">1</span>,<span class="number">0</span>) <span class="comment">###</span></span><br><span class="line">    <span class="comment">#启动游戏相关变量初始化</span></span><br><span class="line">    game_over=<span class="literal">True</span>  <span class="comment">#结束标志 # 是否开始，当start = True，game_over = True 时，才显示 GAME OVER</span></span><br><span class="line">    game_start=<span class="literal">False</span>    <span class="comment">#开始标志</span></span><br><span class="line">    score=<span class="number">0</span> <span class="comment">#得分</span></span><br><span class="line">    orispeed=<span class="number">0.3</span>  <span class="comment">#蛇初始速度</span></span><br><span class="line">    speed=orispeed  <span class="comment">#蛇速度</span></span><br><span class="line">    last_move_time=<span class="literal">None</span></span><br><span class="line">    pause=<span class="literal">False</span> <span class="comment">#暂停</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">for</span> event <span class="keyword">in</span> pygame.event.get():</span><br><span class="line">            <span class="keyword">if</span> event.<span class="built_in">type</span>==QUIT:</span><br><span class="line">                sys.exit()</span><br><span class="line">            <span class="keyword">elif</span> event.<span class="built_in">type</span>==KEYDOWN:</span><br><span class="line">                <span class="keyword">if</span> event.key==K_RETURN:</span><br><span class="line">                    <span class="keyword">if</span> game_over:</span><br><span class="line">                        game_start=<span class="literal">True</span></span><br><span class="line">                        game_over=<span class="literal">False</span></span><br><span class="line">                        b=<span class="literal">True</span></span><br><span class="line">                        snake=init_snake()</span><br><span class="line">                        food=Creat_Food(snake)</span><br><span class="line">                        food_style=Food_Style()</span><br><span class="line">                        pos=(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">                        <span class="comment">#得分</span></span><br><span class="line">                        score=<span class="number">0</span></span><br><span class="line">                        last_move_time=time.time()</span><br><span class="line">                <span class="keyword">elif</span> event.key==K_SPACE:</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">                        pause=<span class="keyword">not</span> pause</span><br><span class="line">                <span class="comment">#以下为防止蛇在向右移动时按向左键，导致GameOver</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_UP,K_w):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">1</span>]: <span class="comment">###</span></span><br><span class="line">                        pos=(<span class="number">0</span>,-<span class="number">1</span>)</span><br><span class="line">                        b=<span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_DOWN,K_s):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">1</span>]:</span><br><span class="line">                        pos = (<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_LEFT,K_a):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">0</span>]:</span><br><span class="line">                        pos = (-<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">elif</span> event.key <span class="keyword">in</span> (K_RIGHT,K_d):</span><br><span class="line">                    <span class="keyword">if</span> b <span class="keyword">and</span> <span class="keyword">not</span> pos[<span class="number">0</span>]:</span><br><span class="line">                        pos = (<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">                        b = <span class="literal">False</span></span><br><span class="line">        <span class="comment">#填充背景色</span></span><br><span class="line">        screen.fill(Back_Ground)</span><br><span class="line">        <span class="comment">###</span></span><br><span class="line">        <span class="comment">#画网格线、竖线</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(Size, Screen_Width, Size):</span><br><span class="line">            pygame.draw.line(screen, Black, (x, Area_y[<span class="number">0</span>] * Size), (x, Screen_Height), Line_Width)</span><br><span class="line">        <span class="comment">#画网格线、横线</span></span><br><span class="line">        <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(Area_y[<span class="number">0</span>] * Size, Screen_Height, Size):</span><br><span class="line">            pygame.draw.line(screen, Black, (<span class="number">0</span>, y), (Screen_Width, y), Line_Width)</span><br><span class="line">        <span class="comment">#蛇的爬行过程</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">            curTime=time.time()</span><br><span class="line">            <span class="keyword">if</span> curTime-last_move_time&gt;speed: <span class="comment">###</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> pause:</span><br><span class="line">                    b=<span class="literal">True</span></span><br><span class="line">                    last_move_time=curTime</span><br><span class="line">                    next_s = (snake[<span class="number">0</span>][<span class="number">0</span>] + pos[<span class="number">0</span>], snake[<span class="number">0</span>][<span class="number">1</span>] + pos[<span class="number">1</span>])</span><br><span class="line">                    <span class="comment">#如果吃到了食物</span></span><br><span class="line">                    <span class="keyword">if</span> next_s==food:</span><br><span class="line">                        snake.appendleft(next_s)</span><br><span class="line">                        score+=food_style[<span class="number">0</span>]</span><br><span class="line">                        speed = orispeed - <span class="number">0.03</span> * (score // <span class="number">100</span>)</span><br><span class="line">                        food = Creat_Food(snake)</span><br><span class="line">                        food_style = Food_Style()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="comment">#在区域内</span></span><br><span class="line">                        <span class="keyword">if</span> Area_x[<span class="number">0</span>]&lt;=next_s[<span class="number">0</span>]&lt;=Area_x[<span class="number">1</span>] <span class="keyword">and</span> Area_y[<span class="number">0</span>]&lt;=next_s[<span class="number">1</span>]&lt;=Area_y[<span class="number">1</span>] <span class="keyword">and</span> next_s <span class="keyword">not</span> <span class="keyword">in</span> snake:</span><br><span class="line">                            snake.appendleft(next_s)</span><br><span class="line">                            snake.pop()</span><br><span class="line">                        <span class="keyword">else</span> :</span><br><span class="line">                            game_over=<span class="literal">True</span></span><br><span class="line">        <span class="comment">#画食物</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> game_over:</span><br><span class="line">         <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        rect(Surface,color,Rect,width=0)</span></span><br><span class="line"><span class="string">第一个参数指定矩形绘制到哪个Surface对象上</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第二个参数指定颜色</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第三个参数指定矩形的范围（left，top，width，height）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">第四个参数指定矩形边框的大小（0表示填充矩形）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">例如绘制三个矩形：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (50, 50, 150, 50), 0)</span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (250, 50, 150, 50), 1)</span></span><br><span class="line"><span class="string">    pygame.draw.rect(screen, BLACK, (450, 50, 150, 50), 10)</span></span><br><span class="line"><span class="string">         &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment"># 避免 GAME OVER 的时候把 GAME OVER 的字给遮住了</span></span><br><span class="line">        pygame.draw.rect(screen, food_style[<span class="number">1</span>], (food[<span class="number">0</span>] * Size, food[<span class="number">1</span>] * Size, Size, Size), <span class="number">0</span>)</span><br><span class="line">        <span class="comment">#画蛇</span></span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> snake:</span><br><span class="line">            pygame.draw.rect(screen, Dark, (s[<span class="number">0</span>] * Size + Line_Width, s[<span class="number">1</span>] * Size + Line_Width,</span><br><span class="line">                                            Size - Line_Width * <span class="number">2</span>, Size - Line_Width * <span class="number">2</span>), <span class="number">0</span>)</span><br><span class="line">        Print_Txt(screen, font1, <span class="number">30</span>, <span class="number">7</span>, <span class="string">f&#x27;速度: <span class="subst">&#123;score // <span class="number">100</span>&#125;</span>&#x27;</span>)</span><br><span class="line">        Print_Txt(screen, font1, <span class="number">450</span>, <span class="number">7</span>, <span class="string">f&#x27;得分: <span class="subst">&#123;score&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="comment">#画GameOver</span></span><br><span class="line">        <span class="keyword">if</span> game_over:</span><br><span class="line">            <span class="keyword">if</span> game_start:</span><br><span class="line">                <span class="comment">#print(&#x27;GameOver&#x27;)</span></span><br><span class="line">                Print_Txt(screen, font2, (Screen_Width - fwidth) // <span class="number">2</span>, (Screen_Height - fheight) // <span class="number">2</span>, <span class="string">&#x27;GAME OVER&#x27;</span>,Red)</span><br><span class="line">        pygame.display.update()</span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/自娱自乐/">自娱自乐</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/python/">python</a><a href="/tags/pygame/">pygame</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/2022/08/05/golang初学笔记/"><span>golang初学笔记</span></a></h3>
     
   
