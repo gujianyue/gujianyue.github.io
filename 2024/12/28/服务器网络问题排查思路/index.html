@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux服务器网络问题排查命令 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="测试与目标主机连通性1ping URL
+测试目标主机指定端口是否开放1telnet URL port
+追踪本机到目标主机网络的路径以及途径各网络节点的延迟1traceroute URL
+可以查看网络传输数据包传输的实际路径
+域名解析查询1nslookup URL
+用于诊断域名解析是否正确或确定域名解">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Linux服务器网络问题排查命令"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Linux服务器网络问题排查命令</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/28/服务器网络问题排查思路/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-28T04:18:34.000Z">
+          2024-12-28
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h3 id="测试与目标主机连通性"><a href="#测试与目标主机连通性" class="headerlink" title="测试与目标主机连通性"></a>测试与目标主机连通性</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping URL</span><br></pre></td></tr></table></figure>
+<h3 id="测试目标主机指定端口是否开放"><a href="#测试目标主机指定端口是否开放" class="headerlink" title="测试目标主机指定端口是否开放"></a>测试目标主机指定端口是否开放</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet URL port</span><br></pre></td></tr></table></figure>
+<h3 id="追踪本机到目标主机网络的路径以及途径各网络节点的延迟"><a href="#追踪本机到目标主机网络的路径以及途径各网络节点的延迟" class="headerlink" title="追踪本机到目标主机网络的路径以及途径各网络节点的延迟"></a>追踪本机到目标主机网络的路径以及途径各网络节点的延迟</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">traceroute URL</span><br></pre></td></tr></table></figure>
+<p>可以查看网络传输数据包传输的实际路径</p>
+<h2 id="域名解析查询"><a href="#域名解析查询" class="headerlink" title="域名解析查询"></a>域名解析查询</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup URL</span><br></pre></td></tr></table></figure>
+<p>用于诊断域名解析是否正确或确定域名解析指向了哪台服务器</p>
+<h2 id="查看本机路由表"><a href="#查看本机路由表" class="headerlink" title="查看本机路由表"></a>查看本机路由表</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip route</span><br><span class="line">ifconfig</span><br><span class="line">netstat -r</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Linux/">Linux</a>
+    </span>
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>

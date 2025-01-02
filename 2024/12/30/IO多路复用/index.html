@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>I/O多路复用 | 谷涧月的学习流水账</title>
+
+  
+  <meta name="author" content="谷涧月">
+  
+
+  
+  <meta name="description" content="I&amp;#x2F;O多路复用的含义IO多路复用（I&amp;#x2F;O Multiplexing）是指在一个线程或进程中，通过某种机制同时处理多个I&amp;#x2F;O操作的技术。它通常用于高并发的网络编程中，尤其是在处理大量客户端请求时，能够有效提高系统的性能和响应速度。
+在传统的阻塞I&amp;#x2F;O模型中，操作">
+  
+
+  
+  
+  <meta name="keywords" content="负载均衡,拥塞控制">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="I/O多路复用"/>
+
+  <meta property="og:site_name" content="谷涧月的学习流水账"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="谷涧月的学习流水账" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">谷涧月的学习流水账</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>I/O多路复用</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2024/12/30/IO多路复用/" rel="bookmark">
+        <time class="entry-date published" datetime="2024-12-30T05:42:45.000Z">
+          2024-12-30
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="I-x2F-O多路复用的含义"><a href="#I-x2F-O多路复用的含义" class="headerlink" title="I&#x2F;O多路复用的含义"></a>I&#x2F;O多路复用的含义</h2><p>IO多路复用（I&#x2F;O Multiplexing）是指在一个线程或进程中，通过某种机制同时处理多个I&#x2F;O操作的技术。它通常用于高并发的网络编程中，尤其是在处理大量客户端请求时，能够有效提高系统的性能和响应速度。</p>
+<p>在传统的阻塞I&#x2F;O模型中，操作系统为每个I&#x2F;O请求分配一个线程或进程，每个线程都会等待I&#x2F;O操作完成，这样在高并发的情况下就会造成大量的资源浪费。而IO多路复用通过使单个线程能够同时管理多个I&#x2F;O操作，避免了创建大量线程，从而提高了系统的效率。</p>
+<h2 id="常见的IO多路复用技术："><a href="#常见的IO多路复用技术：" class="headerlink" title="常见的IO多路复用技术："></a>常见的IO多路复用技术：</h2><p><strong>select：</strong><br>select是最早的IO多路复用机制，允许一个线程监视多个文件描述符（通常是网络连接），并在其中任何一个文件描述符就绪时通知应用程序进行处理。<br>限制：每次调用时最多只能监视1024个文件描述符（操作系统对select的限制），而且效率较低。</p>
+<p><strong>poll：</strong><br>poll与select类似，但是它不受文件描述符数量的限制，可以支持更多的文件描述符。<br>但是，poll依然存在遍历所有文件描述符的性能瓶颈，特别是在处理大量连接时，性能较低。</p>
+<p><strong>epoll（Linux特有）：</strong><br>epoll是Linux下的一种高效IO多路复用机制，它通过事件驱动的方式，只关心那些发生了事件的文件描述符，避免了遍历所有文件描述符的开销。<br>支持水平触发（Level-Triggered, LT）和边缘触发（Edge-Triggered, ET）两种模式，能够有效提高高并发情况下的性能。</p>
+<p><strong>kqueue（BSD和macOS特有）：</strong><br>kqueue是BSD系统上的IO多路复用机制，功能与epoll类似，也支持高效的事件通知机制。</p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ol>
+<li>高并发网络编程（Redis，Nginx，数据库连接池等等）；</li>
+<li>大量并发I&#x2F;O操作的场景，如处理多个客户端请求、文件传输等；</li>
+</ol>
+<h2 id="和HTTP协议多路复用的区别"><a href="#和HTTP协议多路复用的区别" class="headerlink" title="和HTTP协议多路复用的区别"></a>和HTTP协议多路复用的区别</h2><p><strong>概念：</strong><br><strong>I&#x2F;O多路复用</strong>是操作系统的技术，允许在一个线程或进程中同时处理多个 I&#x2F;O 操作（通常是网络连接）。<br><strong>HTTP&#x2F;2多路复用</strong> 是一种协议机制，允许多个 HTTP 请求和响应在同一个 TCP 连接上并行传输，减少了因多次建立连接而带来的开销。</p>
+<p><strong>目的：</strong><br><strong>I&#x2F;O多路复用</strong>主要目的是提高高并发场景下的资源利用效率，减少线程开销。<br><strong>HTTP&#x2F;2多路复用</strong>主要目的是减少 HTTP 协议中多个请求&#x2F;响应之间的延迟，提高带宽利用率。</p>
+<p><strong>工作原理：</strong><br><strong>I&#x2F;O多路复用</strong>指的是操作系统提供的机制，允许一个线程或进程同时监视多个 I&#x2F;O 操作（通常是文件描述符、网络套接字等），操作系统提供了 select、poll、epoll 等系统调用，允许一个线程同时等待多个文件描述符上的事件（例如，网络数据是否可读、是否可写）。当其中某个文件描述符上的事件发生时，操作系统会通知应用程序，应用程序随后处理该事件。<br><strong>HTTP&#x2F;2 的多路复用</strong>是指在一个 TCP 连接上同时并行地发送多个请求和响应。不同于 HTTP&#x2F;1.x 中的每个请求和响应必须各自占用一个独立的 TCP 连接，HTTP&#x2F;2 的多路复用允许多个 HTTP 请求和响应在同一个连接上交替进行，不需要等待前一个请求完成后才能开始下一个请求。<br>HTTP&#x2F;2 使用 二进制分帧（binary framing） 的方式，将请求和响应分解为多个小的帧（frame），然后将这些帧通过一个连接交错发送。每个请求和响应都会被分配一个唯一的流标识符（stream identifier），可以在同一个连接中并发地发送多个流，而不需要等待其他流的完成。<br>这种机制是通过使用一个 流（stream）来标识不同的请求和响应，每个流包含多个 帧（frame），这些帧可以在网络上交替传输。因为 HTTP&#x2F;2 只使用一个 TCP 连接，所以可以有效避免 HTTP&#x2F;1.x 中“头阻塞”问题（head-of-line blocking）。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/网络/">网络</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/负载均衡/">负载均衡</a><a href="/tags/拥塞控制/">拥塞控制</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2025 谷涧月
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
